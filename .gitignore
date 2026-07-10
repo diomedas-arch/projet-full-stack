@@ -1,0 +1,9 @@
+.idea/
+.gradle/
+backend/.gradle/
+backend/build/
+backend/out/
+
+*.class
+*.log
+
