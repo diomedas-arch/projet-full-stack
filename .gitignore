@@ -3,7 +3,11 @@
 backend/.gradle/
 backend/build/
 backend/out/
+frontend/node_modules/
+frontend/dist/
 
 *.class
 *.log
 
+
+backend/src/main/resources/application.properties
