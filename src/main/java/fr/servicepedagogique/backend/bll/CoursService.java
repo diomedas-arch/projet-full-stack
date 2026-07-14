@@ -2,42 +2,87 @@ package fr.servicepedagogique.backend.bll;
 
 import fr.servicepedagogique.backend.bo.Cours;
 import fr.servicepedagogique.backend.dal.CoursRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
+import fr.servicepedagogique.backend.dto.cours.CoursResponse;
+import fr.servicepedagogique.backend.dto.cours.CreerCoursRequest;
+import fr.servicepedagogique.backend.dto.cours.ModifierCoursRequest;
+import fr.servicepedagogique.backend.exception.CodeCoursDejaUtiliseException;
+import fr.servicepedagogique.backend.exception.RessourceIntrouvableException;
 import java.util.List;
-import java.util.Optional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
-@RequiredArgsConstructor
 public class CoursService {
 
     private final CoursRepository coursRepository;
 
-    public List<Cours> findAll() {
-        return coursRepository.findAll();
+    public CoursService(CoursRepository coursRepository) {
+        this.coursRepository = coursRepository;
     }
 
-    public Optional<Cours> findById(Integer id) {
-        return coursRepository.findById(id);
+    @Transactional(readOnly = true)
+    public List<CoursResponse> lister() {
+        return coursRepository.findAll()
+                .stream()
+                .map(CoursResponse::depuis)
+                .toList();
     }
 
-    public Cours create(Cours cours) {
-        if (coursRepository.existsByCode(cours.getCode())) {
-            throw new IllegalArgumentException("Un cours avec ce code existe déjà : " + cours.getCode());
+    @Transactional(readOnly = true)
+    public CoursResponse consulter(Integer idCours) {
+        return CoursResponse.depuis(trouverCours(idCours));
+    }
+
+    @Transactional
+    public CoursResponse creer(CreerCoursRequest request) {
+        String code = normaliserCodeObligatoire(request.code());
+        verifierCodeDisponible(code, null);
+
+        Cours cours = new Cours(code, request.titre().trim());
+        return CoursResponse.depuis(coursRepository.save(cours));
+    }
+
+    @Transactional
+    public CoursResponse modifier(Integer idCours, ModifierCoursRequest request) {
+        Cours cours = trouverCours(idCours);
+
+        if (request.code() != null) {
+            String code = normaliserCodeObligatoire(request.code());
+            verifierCodeDisponible(code, idCours);
+            cours.setCode(code);
         }
-        return coursRepository.save(cours);
+
+        if (request.titre() != null) {
+            cours.setTitre(request.titre().trim());
+        }
+
+        return CoursResponse.depuis(cours);
     }
 
-    public Cours update(Integer id, Cours coursMaj) {
-        Cours existant = coursRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cours introuvable : " + id));
-        existant.setCode(coursMaj.getCode());
-        existant.setTitre(coursMaj.getTitre());
-        return coursRepository.save(existant);
+    @Transactional
+    public void supprimer(Integer idCours) {
+        coursRepository.delete(trouverCours(idCours));
     }
 
-    public void delete(Integer id) {
-        coursRepository.deleteById(id);
+    private Cours trouverCours(Integer idCours) {
+        return coursRepository.findById(idCours)
+                .orElseThrow(() -> new RessourceIntrouvableException("Cours introuvable."));
+    }
+
+    private void verifierCodeDisponible(String code, Integer idCoursIgnore) {
+        coursRepository.findByCode(code).ifPresent(coursExistant -> {
+            if (!coursExistant.getIdCours().equals(idCoursIgnore)) {
+                throw new CodeCoursDejaUtiliseException("Un cours avec ce code existe déjà.");
+            }
+        });
+    }
+
+    private String normaliserCodeObligatoire(String code) {
+        if (!StringUtils.hasText(code)) {
+            throw new IllegalArgumentException("Le code est obligatoire.");
+        }
+
+        return code.trim();
     }
 }

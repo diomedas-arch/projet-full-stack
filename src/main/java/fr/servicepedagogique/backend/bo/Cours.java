@@ -22,6 +22,11 @@ public class Cours {
     @Column(name = "titre", nullable = false, length = 150)
     private String titre;
 
+    protected Cours() {
+    }
 
-
+    public Cours(String code, String titre) {
+        this.code = code;
+        this.titre = titre;
+    }
 }

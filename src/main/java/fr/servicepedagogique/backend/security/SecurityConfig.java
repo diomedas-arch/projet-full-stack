@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers("/api/utilisateurs/**").hasAuthority(RoleUtilisateur.ROLE_ADMIN.name())
+                        .requestMatchers("/api/cours/**").hasAuthority(RoleUtilisateur.ROLE_REFERENTE.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
