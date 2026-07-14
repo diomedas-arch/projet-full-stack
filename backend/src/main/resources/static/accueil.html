@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17203c">
+    <title>Accueil - Service pédagogique</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Navigation principale">
+        <a class="brand" href="/accueil.html">
+            <span class="brand-mark">SP</span>
+            <span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span>
+        </a>
+        <p class="nav-label">Navigation</p>
+        <nav class="main-nav">
+            <a class="nav-link" data-nav="accueil" href="/accueil.html"><span class="nav-icon">A</span>Accueil</a>
+            <a class="nav-link" data-nav="filieres" data-gestion-only href="/filieres.html"><span class="nav-icon">F</span>Filières</a>
+            <a class="nav-link" data-nav="cursus" data-gestion-only href="/cursus.html"><span class="nav-icon">C</span>Cursus</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <span class="user-avatar" data-user-initial>U</span>
+                <span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span>
+            </div>
+            <button class="logout-button" type="button" data-logout>Se déconnecter</button>
+        </div>
+    </aside>
+    <div class="menu-backdrop" data-menu-backdrop></div>
+
+    <div class="app-main">
+        <header class="mobile-header">
+            <button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button>
+            <strong>Service pédagogique</strong>
+        </header>
+
+        <main class="page-content">
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">Tableau de bord</p>
+                    <h1>Bonjour, <span data-dashboard-name>bienvenue</span></h1>
+                    <p class="page-description">Retrouvez une vue rapide de vos référentiels pédagogiques et accédez aux actions principales.</p>
+                </div>
+                <a class="button button-primary" data-gestion-only href="/cursus.html?nouveau=1">Créer un cursus</a>
+            </header>
+
+            <section class="stats-grid" aria-label="Indicateurs pédagogiques">
+                <article class="stat-card">
+                    <span class="stat-label">Filières</span>
+                    <strong class="stat-value" data-stat-filieres>—</strong>
+                    <span class="stat-note">Domaines de formation enregistrés</span>
+                </article>
+                <article class="stat-card green">
+                    <span class="stat-label">Cursus</span>
+                    <strong class="stat-value" data-stat-cursus>—</strong>
+                    <span class="stat-note">Parcours pédagogiques disponibles</span>
+                </article>
+                <article class="stat-card amber">
+                    <span class="stat-label">À compléter</span>
+                    <strong class="stat-value" data-stat-sans-cursus>—</strong>
+                    <span class="stat-note">Filières ne contenant encore aucun cursus</span>
+                </article>
+            </section>
+
+            <div class="dashboard-grid">
+                <section class="card" aria-labelledby="derniers-cursus-title">
+                    <div class="card-header">
+                        <div>
+                            <h2 id="derniers-cursus-title">Cursus enregistrés</h2>
+                            <p>Vue d’ensemble des parcours existants</p>
+                        </div>
+                        <a class="button button-secondary button-small" data-gestion-only href="/cursus.html">Tout afficher</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th>Cursus</th><th>Filière</th><th>Niveau</th></tr></thead>
+                            <tbody data-dashboard-cursus>
+                            <tr><td colspan="3" class="state-cell">Chargement des cursus…</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <aside class="card" data-gestion-only aria-labelledby="actions-title">
+                    <div class="card-header"><div><h2 id="actions-title">Actions rapides</h2><p>Gérer les référentiels</p></div></div>
+                    <div class="card-body quick-actions">
+                        <a class="quick-action" href="/filieres.html?nouveau=1"><span><strong>Nouvelle filière</strong><span>Ajouter un domaine de formation</span></span><span class="quick-arrow">→</span></a>
+                        <a class="quick-action" href="/cursus.html?nouveau=1"><span><strong>Nouveau cursus</strong><span>Créer un parcours et le rattacher</span></span><span class="quick-arrow">→</span></a>
+                        <a class="quick-action" href="/filieres.html"><span><strong>Consulter les filières</strong><span>Voir leur nombre de cursus</span></span><span class="quick-arrow">→</span></a>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+</div>
+<script type="module" src="/js/accueil.js"></script>
+</body>
+</html>

@@ -30,6 +30,15 @@ public class GestionErreurControllerAdvice {
         return ApiError.simple(HttpStatus.CONFLICT, exception.getMessage(), request);
     }
 
+    @ExceptionHandler(DonneeDejaExistanteException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError donneeDejaExistante(
+            DonneeDejaExistanteException exception,
+            HttpServletRequest request
+    ) {
+        return ApiError.simple(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError validation(MethodArgumentNotValidException exception, HttpServletRequest request) {
