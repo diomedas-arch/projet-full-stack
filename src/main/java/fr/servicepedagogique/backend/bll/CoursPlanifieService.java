@@ -12,10 +12,11 @@ import fr.servicepedagogique.backend.dto.coursplanifie.CoursPlanifieResponse;
 import fr.servicepedagogique.backend.dto.coursplanifie.CreerCoursPlanifieRequest;
 import fr.servicepedagogique.backend.dto.coursplanifie.ModifierCoursPlanifieRequest;
 import fr.servicepedagogique.backend.exception.RessourceIntrouvableException;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CoursPlanifieService {
