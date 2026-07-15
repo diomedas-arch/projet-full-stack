@@ -1,17 +1,13 @@
 package fr.servicepedagogique.backend.bo;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-// TODO MERGE : entité placeholder minimale créée par Allan pour permettre la compilation de Promotion/CoursPlanifie.
-// À remplacer/fusionner avec l'implémentation complète de Sasha (branche cursus-filiere).
-// Vérifier la cohérence des champs et des annotations avant de merger.
 @Entity
-@Getter
-@Setter
-@ToString
 @Table(name = "FILIERE")
 public class Filiere {
 
@@ -20,13 +16,25 @@ public class Filiere {
     @Column(name = "id_filiere")
     private Integer idFiliere;
 
-    @Column(name = "libelle", nullable = false, length = 100, unique = true)
+    @Column(name = "libelle", nullable = false, unique = true, length = 100)
     private String libelle;
 
     protected Filiere() {
     }
 
     public Filiere(String libelle) {
+        this.libelle = libelle;
+    }
+
+    public Integer getIdFiliere() {
+        return idFiliere;
+    }
+
+    public String getLibelle() {
+        return libelle;
+    }
+
+    public void setLibelle(String libelle) {
         this.libelle = libelle;
     }
 }
