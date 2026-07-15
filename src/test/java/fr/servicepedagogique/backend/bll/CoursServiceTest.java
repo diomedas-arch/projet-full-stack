@@ -1,12 +1,5 @@
 package fr.servicepedagogique.backend.bll;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import fr.servicepedagogique.backend.bo.Cours;
 import fr.servicepedagogique.backend.dal.CoursRepository;
 import fr.servicepedagogique.backend.dto.cours.CoursResponse;
@@ -14,13 +7,19 @@ import fr.servicepedagogique.backend.dto.cours.CreerCoursRequest;
 import fr.servicepedagogique.backend.dto.cours.ModifierCoursRequest;
 import fr.servicepedagogique.backend.exception.CodeCoursDejaUtiliseException;
 import fr.servicepedagogique.backend.exception.RessourceIntrouvableException;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CoursServiceTest {
@@ -50,6 +49,10 @@ class CoursServiceTest {
 
         assertThat(resultat).containsExactly(new CoursResponse(1, "JAVA101", "Introduction à Java"));
     }
+
+
+
+
 
     @Test
     void consulter_renvoieLeCoursQuandIlExiste() {
