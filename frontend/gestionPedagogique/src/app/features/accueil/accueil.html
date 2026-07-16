@@ -1,0 +1,102 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Tableau de bord</p>
+      <h1>Bonjour, <span>{{ nom() }}</span></h1>
+      <p>Retrouvez une vue rapide de vos référentiels pédagogiques et accédez aux actions principales.</p>
+    </div>
+    @if (peutGerer()) {
+      <a class="button button-primary" routerLink="/cursus">Créer un cursus</a>
+    }
+  </header>
+
+  @if (accesRefuse()) {
+    <div class="form-message error visible" role="alert">
+      Vous n’avez pas les droits nécessaires pour accéder à cette rubrique.
+    </div>
+  }
+
+  <section class="stats-grid" aria-label="Indicateurs pédagogiques">
+    <article class="stat-card">
+      <span class="stat-label">Filières</span>
+      <strong class="stat-value">{{ chargement() ? '—' : stats().filieres }}</strong>
+      <span class="stat-note">Domaines de formation enregistrés</span>
+    </article>
+    <article class="stat-card green">
+      <span class="stat-label">Cursus</span>
+      <strong class="stat-value">{{ chargement() ? '—' : stats().cursus }}</strong>
+      <span class="stat-note">Parcours pédagogiques disponibles</span>
+    </article>
+    <article class="stat-card amber">
+      <span class="stat-label">Promotions</span>
+      <strong class="stat-value">{{ chargement() ? '—' : stats().promotions }}</strong>
+      <span class="stat-note">{{ stats().sansCursus }} filière(s) sans cursus</span>
+    </article>
+  </section>
+
+  <div class="dashboard-grid">
+    <section class="card" aria-labelledby="derniers-cursus-title">
+      <div class="card-header">
+        <div>
+          <h2 id="derniers-cursus-title">Cursus enregistrés</h2>
+          <p>Vue d’ensemble des parcours existants</p>
+        </div>
+        @if (peutGerer()) {
+          <a class="button button-secondary button-small" routerLink="/cursus">Tout afficher</a>
+        }
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Cursus</th><th>Filière</th><th>Niveau</th></tr>
+          </thead>
+          <tbody>
+            @if (chargement()) {
+              <tr><td colspan="3" class="state-cell">Chargement des cursus…</td></tr>
+            } @else if (erreur()) {
+              <tr><td colspan="3" class="state-cell">{{ erreur() }}</td></tr>
+            } @else if (cursusRecents().length === 0) {
+              <tr><td colspan="3" class="state-cell">Aucun cursus n’est encore enregistré.</td></tr>
+            } @else {
+              @for (cursus of cursusRecents(); track cursus.idCursus) {
+                <tr>
+                  <td class="table-primary">{{ cursus.titre }}</td>
+                  <td>{{ cursus.libelleFiliere }}</td>
+                  <td [class.muted]="!cursus.niveau">{{ cursus.niveau || 'Non renseigné' }}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    @if (peutGerer()) {
+      <aside class="card" aria-labelledby="actions-title">
+        <div class="card-header">
+          <div><h2 id="actions-title">Actions rapides</h2><p>Gérer les référentiels</p></div>
+        </div>
+        <div class="card-body quick-actions">
+          <a class="quick-action" routerLink="/filieres">
+            <span><strong>Nouvelle filière</strong><span>Ajouter un domaine de formation</span></span><span class="quick-arrow">→</span>
+          </a>
+          <a class="quick-action" routerLink="/cursus">
+            <span><strong>Nouveau cursus</strong><span>Créer un parcours et le rattacher</span></span><span class="quick-arrow">→</span>
+          </a>
+          <a class="quick-action" routerLink="/eleves/nouveau">
+            <span><strong>Nouvel élève</strong><span>Créer le compte utilisateur et le dossier élève</span></span><span class="quick-arrow">→</span>
+          </a>
+          <a class="quick-action" routerLink="/cours-planifies/nouveau">
+            <span><strong>Planifier un cours</strong><span>Affecter un cours réel à une promotion</span></span><span class="quick-arrow">→</span>
+          </a>
+          @if (estAdmin()) {
+            <a class="quick-action" routerLink="/utilisateurs/nouveau">
+              <span><strong>Nouvel utilisateur</strong><span>Attribuer un rôle applicatif</span></span><span class="quick-arrow">→</span>
+            </a>
+          }
+        </div>
+      </aside>
+    }
+  </div>
+</section>

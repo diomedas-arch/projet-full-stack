@@ -10,6 +10,7 @@ import fr.servicepedagogique.backend.dal.InscriptionCoursRepository;
 import fr.servicepedagogique.backend.dal.InscriptionPromoRepository;
 import fr.servicepedagogique.backend.dto.formateur.CoursFormateurResponse;
 import fr.servicepedagogique.backend.dto.formateur.EleveConcerneResponse;
+import fr.servicepedagogique.backend.dto.formateur.FormateurDisponibleResponse;
 import fr.servicepedagogique.backend.dto.planning.CoursPlanifieResponse;
 import fr.servicepedagogique.backend.exception.RessourceIntrouvableException;
 import java.util.LinkedHashMap;
@@ -46,6 +47,14 @@ public class FormateurConsultationService {
         return coursPlanifieRepository.findCoursParFormateur(formateur.getIdFormateur())
                 .stream()
                 .map(this::versResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<FormateurDisponibleResponse> listerDisponibles(Boolean actif) {
+        return formateurRepository.findDisponibles(actif)
+                .stream()
+                .map(FormateurDisponibleResponse::depuis)
                 .toList();
     }
 

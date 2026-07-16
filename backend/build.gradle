@@ -17,6 +17,12 @@ repositories {
 	mavenCentral()
 }
 
+def frontendDir = file('../frontend/gestionPedagogique')
+def frontendDistDir = file("${frontendDir}/dist/gestion-pedagogique/browser")
+def frontendStaticDir = layout.buildDirectory.dir('generated/frontend-static')
+def npmCommand = System.getProperty('os.name').toLowerCase().contains('windows') ? 'npm.cmd' : 'npm'
+def skipFrontend = providers.gradleProperty('skipFrontend').isPresent()
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -36,4 +42,33 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('npmCi', Exec) {
+	onlyIf { !skipFrontend }
+	workingDir frontendDir
+	commandLine npmCommand, 'ci'
+}
+
+tasks.register('npmBuild', Exec) {
+	onlyIf { !skipFrontend }
+	dependsOn tasks.named('npmCi')
+	workingDir frontendDir
+	commandLine npmCommand, 'run', 'build'
+}
+
+tasks.register('copyFrontend', Copy) {
+	onlyIf { !skipFrontend }
+	dependsOn tasks.named('npmBuild')
+	from frontendDistDir
+	into frontendStaticDir
+}
+
+tasks.named('bootJar') {
+	if (!skipFrontend) {
+		dependsOn tasks.named('copyFrontend')
+		from(frontendStaticDir) {
+			into 'BOOT-INF/classes/static'
+		}
+	}
 }

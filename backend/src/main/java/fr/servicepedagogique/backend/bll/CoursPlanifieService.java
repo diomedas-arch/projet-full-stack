@@ -118,13 +118,8 @@ public class CoursPlanifieService {
         coursPlanifie.setDateDebut(dateDebut);
         coursPlanifie.setDateFin(dateFin);
 
-        if (request.idFormateur() != null) {
-            coursPlanifie.setFormateur(trouverFormateur(request.idFormateur()));
-        }
-
-        if (request.salle() != null) {
-            coursPlanifie.setSalle(normaliserTexteOptionnel(request.salle()));
-        }
+        coursPlanifie.setFormateur(request.idFormateur() == null ? null : trouverFormateur(request.idFormateur()));
+        coursPlanifie.setSalle(normaliserTexteOptionnel(request.salle()));
 
         if (request.statut() != null) {
             coursPlanifie.setStatut(normaliserStatut(request.statut(), coursPlanifie.getStatut()));

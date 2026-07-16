@@ -1,0 +1,54 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Utilisateurs</h1>
+      <p>{{ utilisateursFiltres().length }} utilisateur(s)</p>
+    </div>
+    <a class="button button-primary" routerLink="/utilisateurs/nouveau">Nouvel utilisateur</a>
+  </header>
+
+  <mat-form-field appearance="outline" class="recherche">
+    <mat-label>Rechercher un utilisateur</mat-label>
+    <input matInput [value]="recherche()" (input)="rechercher($any($event.target).value)" />
+  </mat-form-field>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="utilisateursFiltres()" class="table">
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let utilisateur">{{ utilisateur.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Rôle</th>
+        <td mat-cell *matCellDef="let utilisateur">{{ libelleRole(utilisateur.role) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="statut">
+        <th mat-header-cell *matHeaderCellDef>Statut</th>
+        <td mat-cell *matCellDef="let utilisateur">{{ libelleStatut(utilisateur.statut) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let utilisateur" class="actions-cell">
+          <a class="button button-small button-secondary" [routerLink]="['/utilisateurs', utilisateur.id, 'modifier']">
+            Modifier
+          </a>
+          <button class="button button-small button-danger" type="button" (click)="supprimer(utilisateur)">
+            Supprimer
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    @if (utilisateursFiltres().length === 0) {
+      <p class="etat-vide">
+        {{ recherche() ? 'Aucun utilisateur ne correspond à la recherche.' : 'Aucun utilisateur enregistré.' }}
+      </p>
+    }
+  </div>
+</section>

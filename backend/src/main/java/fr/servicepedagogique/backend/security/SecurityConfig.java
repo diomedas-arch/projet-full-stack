@@ -34,23 +34,37 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/index.html",
-                                "/login.html",
-                                "/accueil.html",
-                                "/promotions.html",
-                                "/promotion-detail.html",
-                                "/calendrier.html",
-                                "/formateur-cours.html",
-                                "/filieres.html",
-                                "/cursus.html",
-                                "/eleves.html",
-                                "/eleve-form.html",
-                                "/utilisateurs.html",
-                                "/utilisateur-form.html",
+                                "/login",
+                                "/accueil",
+                                "/promotions",
+                                "/promotions/**",
+                                "/mon-calendrier",
+                                "/mes-cours",
+                                "/filieres",
+                                "/cursus",
+                                "/cours",
+                                "/cours/**",
+                                "/cours-planifies",
+                                "/cours-planifies/**",
+                                "/eleves",
+                                "/eleves/**",
+                                "/utilisateurs",
+                                "/utilisateurs/**",
+                                "/assets/**",
                                 "/css/**",
                                 "/js/**",
-                                "/favicon.ico"
+                                "/*.css",
+                                "/*.js",
+                                "/*.ico",
+                                "/*.png",
+                                "/*.svg"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/cursus/*/cours", "/api/formateurs", "/api/formateurs/**")
+                        .hasAnyAuthority(
+                                RoleUtilisateur.ROLE_REFERENTE.name(),
+                                RoleUtilisateur.ROLE_ADMIN.name()
+                        )
                         .requestMatchers(HttpMethod.GET, "/api/promotions/**", "/api/cours/**", "/api/cours-planifies/**")
                         .authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/filieres/**", "/api/cursus/**").authenticated()

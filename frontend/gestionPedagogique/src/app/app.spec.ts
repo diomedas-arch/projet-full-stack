@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { commonComponentProviders } from './testing/test-providers';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: commonComponentProviders(),
     }).compileComponents();
   });
 
@@ -16,8 +18,9 @@ describe('App', () => {
 
   it('should render the main navigation', async () => {
     const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.nav-principale')).toBeTruthy();
+    expect(compiled.querySelector('.main-nav')).toBeTruthy();
   });
 });

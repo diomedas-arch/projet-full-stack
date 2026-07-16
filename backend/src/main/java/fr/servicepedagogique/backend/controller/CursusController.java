@@ -1,6 +1,7 @@
 package fr.servicepedagogique.backend.controller;
 
 import fr.servicepedagogique.backend.bll.CursusService;
+import fr.servicepedagogique.backend.dto.cursus.CursusCoursResponse;
 import fr.servicepedagogique.backend.dto.cursus.CursusRequest;
 import fr.servicepedagogique.backend.dto.cursus.CursusResponse;
 import jakarta.validation.Valid;
@@ -33,6 +34,11 @@ public class CursusController {
     @GetMapping("/{idCursus}")
     public CursusResponse consulter(@PathVariable Integer idCursus) {
         return cursusService.consulter(idCursus);
+    }
+
+    @GetMapping("/{idCursus}/cours")
+    public List<CursusCoursResponse> listerCours(@PathVariable Integer idCursus) {
+        return cursusService.listerCours(idCursus);
     }
 
     @PostMapping

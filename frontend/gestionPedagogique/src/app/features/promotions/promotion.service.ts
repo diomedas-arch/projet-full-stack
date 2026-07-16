@@ -2,7 +2,7 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Promotion } from './promotion.model';
+import { Promotion, PromotionDetailData } from './promotion.model';
 
 export interface PromotionRequest {
   idCursus: number;
@@ -24,6 +24,10 @@ export class PromotionService {
 
   consulter(id: number): Observable<Promotion> {
     return this.http.get<Promotion>(`${this.baseUrl}/${id}`);
+  }
+
+  consulterDetail(id: number): Observable<PromotionDetailData> {
+    return this.http.get<PromotionDetailData>(`${this.baseUrl}/${id}/detail`);
   }
 
   creer(promotion: PromotionRequest, context?: HttpContext): Observable<Promotion> {

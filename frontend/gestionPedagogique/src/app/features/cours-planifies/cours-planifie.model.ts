@@ -4,10 +4,10 @@ export interface CoursPlanifie {
   libellePromotion: string;
   idCursusCours: number;
   titreCours: string;
-  idFormateur: number;
-  specialiteFormateur: string;
+  idFormateur: number | null;
+  specialiteFormateur: string | null;
   dateDebut: string;
   dateFin: string;
-  salle: string;
+  salle: string | null;
   statut: string;
 }

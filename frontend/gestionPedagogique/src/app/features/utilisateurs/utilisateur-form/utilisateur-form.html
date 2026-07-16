@@ -1,0 +1,68 @@
+<form class="form-page" [formGroup]="form" (ngSubmit)="enregistrer()">
+  <h1>{{ modeEdition() ? 'Modifier l’utilisateur' : 'Nouvel utilisateur' }}</h1>
+
+  <div class="bandeau-info">
+    <span>
+      {{ modeEdition()
+        ? 'Laissez le mot de passe vide pour conserver le mot de passe actuel.'
+        : 'Le mot de passe est obligatoire à la création du compte.' }}
+    </span>
+  </div>
+
+  @if (erreur()) {
+    <div class="bandeau-erreur" role="alert">{{ erreur() }}</div>
+  }
+
+  <div class="form-champs">
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+        <mat-error>L’email est obligatoire.</mat-error>
+      }
+      @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+        <mat-error>L’email n’est pas valide.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ modeEdition() ? 'Nouveau mot de passe' : 'Mot de passe' }}</mat-label>
+      <input matInput type="password" formControlName="motDePasse" placeholder="8 caractères minimum" />
+      @if (form.controls.motDePasse.hasError('required') && form.controls.motDePasse.touched) {
+        <mat-error>Le mot de passe est obligatoire.</mat-error>
+      }
+      @if (form.controls.motDePasse.hasError('minlength') && form.controls.motDePasse.touched) {
+        <mat-error>Le mot de passe doit contenir au moins 8 caractères.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rôle</mat-label>
+      <mat-select formControlName="role">
+        @for (role of roles; track role) {
+          <mat-option [value]="role">{{ role }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        @for (statut of statuts; track statut) {
+          <mat-option [value]="statut">{{ statut }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="form-actions">
+    <button class="button button-secondary" type="button" (click)="annuler()">Annuler</button>
+    <button class="button button-primary" type="submit" [disabled]="chargement() || enregistrementEnCours()">
+      @if (enregistrementEnCours()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ modeEdition() ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </div>
+</form>

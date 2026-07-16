@@ -1,0 +1,45 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="titre-connexion">
+    <span class="badge">Service pédagogique</span>
+    <h1 id="titre-connexion">Connexion</h1>
+    <p>Connectez-vous pour accéder à votre espace de gestion pédagogique.</p>
+
+    <form [formGroup]="form" (ngSubmit)="connecter()" class="login-form" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" autocomplete="username" placeholder="prenom.nom@email.com" />
+        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+          <span class="field-error">L’email est obligatoire.</span>
+        }
+        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+          <span class="field-error">L’email n’est pas valide.</span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="motDePasse">Mot de passe</label>
+        <input
+          id="motDePasse"
+          type="password"
+          formControlName="motDePasse"
+          autocomplete="current-password"
+          placeholder="Votre mot de passe"
+        />
+        @if (form.controls.motDePasse.hasError('required') && form.controls.motDePasse.touched) {
+          <span class="field-error">Le mot de passe est obligatoire.</span>
+        }
+      </div>
+
+      <button type="submit" [disabled]="chargement()">
+        {{ chargement() ? 'Connexion en cours...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    @if (erreur()) {
+      <div class="message error" role="alert">{{ erreur() }}</div>
+    }
+    @if (succes()) {
+      <div class="message success" role="status">{{ succes() }}</div>
+    }
+  </section>
+</main>

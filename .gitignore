@@ -1,9 +1,16 @@
 .idea/
 .gradle/
+.pnpm-store/
+.settings/
+*.class
+*.log
+*.iml
+*.ipr
+*.iws
 backend/.gradle/
 backend/build/
 backend/out/
-
-*.class
-*.log
+frontend/gestionPedagogique/node_modules/
+frontend/gestionPedagogique/dist/
+frontend/gestionPedagogique/.angular/
 

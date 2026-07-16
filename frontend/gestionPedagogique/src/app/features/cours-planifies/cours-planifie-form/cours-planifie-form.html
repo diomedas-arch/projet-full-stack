@@ -2,15 +2,15 @@
   <h1>{{ modeEdition() ? 'Modifier le cours planifié' : 'Nouveau cours planifié' }}</h1>
 
   <div class="bandeau-info">
-    <mat-icon>info</mat-icon>
+    <strong>Info</strong>
     <span>
-      Le cours choisi doit appartenir au même cursus que la promotion sélectionnée — la liste des
-      cours se filtre automatiquement selon le cursus de la promotion.
+      Le cours choisi doit appartenir au même cursus que la promotion sélectionnée. La liste des cours est chargée
+      depuis l’API dès que la promotion change.
     </span>
   </div>
 
   @if (erreurGenerale()) {
-    <div class="bandeau-erreur">{{ erreurGenerale() }}</div>
+    <div class="bandeau-erreur" role="alert">{{ erreurGenerale() }}</div>
   }
 
   <div class="form-champs">
@@ -28,25 +28,38 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Cours du cursus</mat-label>
-      <mat-select formControlName="idCursusCours">
-        @for (cursusCours of cursusCoursDisponibles(); track cursusCours.idCursusCours) {
-          <mat-option [value]="cursusCours.idCursusCours">{{ cursusCours.titreCours }}</mat-option>
+      <mat-select formControlName="idCursusCours" [disabled]="chargementCours()">
+        @if (chargementCours()) {
+          <mat-option disabled>Chargement des cours…</mat-option>
+        } @else if (erreurCours()) {
+          <mat-option disabled>{{ erreurCours() }}</mat-option>
+        } @else if (cursusCoursDisponibles().length === 0) {
+          <mat-option disabled>Aucun cours disponible pour ce cursus</mat-option>
+        } @else {
+          @for (cursusCours of cursusCoursDisponibles(); track cursusCours.idCursusCours) {
+            <mat-option [value]="cursusCours.idCursusCours">
+              {{ cursusCours.codeCours }} - {{ cursusCours.titreCours }}
+            </mat-option>
+          }
         }
       </mat-select>
       @if (form.controls.idCursusCours.hasError('required') && form.controls.idCursusCours.touched) {
         <mat-error>Le cours du cursus est obligatoire.</mat-error>
       }
-      @if (coursErreurBackend()) {
-        <mat-error>{{ coursErreurBackend() }}</mat-error>
+      @if (erreurCours()) {
+        <mat-error>{{ erreurCours() }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Formateur</mat-label>
       <mat-select formControlName="idFormateur">
-        <mat-option [value]="null">— Non assigné —</mat-option>
-        @for (formateur of formateurTemporaire; track formateur.idFormateur) {
-          <mat-option [value]="formateur.idFormateur">{{ formateur.specialite }}</mat-option>
+        <mat-option [value]="null">Aucun formateur</mat-option>
+        @if (formateurs().length === 0) {
+          <mat-option disabled>Aucun formateur actif disponible</mat-option>
+        }
+        @for (formateur of formateurs(); track formateur.idFormateur) {
+          <mat-option [value]="formateur.idFormateur">{{ libelleFormateur(formateur) }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -86,8 +99,8 @@
   </div>
 
   <div class="form-actions">
-    <button mat-button type="button" (click)="annuler()">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="enregistrementEnCours()">
+    <button class="button button-secondary" type="button" (click)="annuler()">Annuler</button>
+    <button class="button button-primary" type="submit" [disabled]="chargementInitial() || enregistrementEnCours()">
       @if (enregistrementEnCours()) {
         <mat-spinner diameter="18" />
       } @else {

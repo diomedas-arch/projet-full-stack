@@ -17,6 +17,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../../core/auth/auth.service';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { StatutBadge } from '../../../shared/ui/statut-badge/statut-badge';
 import { Promotion } from '../promotion.model';
@@ -40,6 +41,7 @@ type FiltreStatut = 'TOUTES' | 'PLANIFIEE' | 'EN_COURS' | 'TERMINEE' | 'ANNULEE'
 })
 export class PromotionList implements OnInit, AfterViewInit {
   private readonly promotionService = inject(PromotionService);
+  protected readonly auth = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly sort = viewChild(MatSort);
@@ -48,6 +50,7 @@ export class PromotionList implements OnInit, AfterViewInit {
   protected readonly promotions = signal<Promotion[]>([]);
   protected readonly filtreStatut = signal<FiltreStatut>('TOUTES');
   protected readonly dataSource = new MatTableDataSource<Promotion>([]);
+  protected readonly peutGerer = computed(() => this.auth.aUnRole(['ROLE_ADMIN', 'ROLE_REFERENTE']));
 
   protected readonly filtres: { valeur: FiltreStatut; label: string }[] = [
     { valeur: 'TOUTES', label: 'Toutes' },

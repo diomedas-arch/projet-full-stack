@@ -2,8 +2,10 @@ package fr.servicepedagogique.backend.bll;
 
 import fr.servicepedagogique.backend.bo.Cursus;
 import fr.servicepedagogique.backend.bo.Filiere;
+import fr.servicepedagogique.backend.dal.CursusCoursRepository;
 import fr.servicepedagogique.backend.dal.CursusRepository;
 import fr.servicepedagogique.backend.dal.FiliereRepository;
+import fr.servicepedagogique.backend.dto.cursus.CursusCoursResponse;
 import fr.servicepedagogique.backend.dto.cursus.CursusRequest;
 import fr.servicepedagogique.backend.dto.cursus.CursusResponse;
 import fr.servicepedagogique.backend.exception.DonneeDejaExistanteException;
@@ -18,10 +20,16 @@ public class CursusService {
 
     private final CursusRepository cursusRepository;
     private final FiliereRepository filiereRepository;
+    private final CursusCoursRepository cursusCoursRepository;
 
-    public CursusService(CursusRepository cursusRepository, FiliereRepository filiereRepository) {
+    public CursusService(
+            CursusRepository cursusRepository,
+            FiliereRepository filiereRepository,
+            CursusCoursRepository cursusCoursRepository
+    ) {
         this.cursusRepository = cursusRepository;
         this.filiereRepository = filiereRepository;
+        this.cursusCoursRepository = cursusCoursRepository;
     }
 
     @Transactional(readOnly = true)
@@ -35,6 +43,15 @@ public class CursusService {
     @Transactional(readOnly = true)
     public CursusResponse consulter(Integer idCursus) {
         return versResponse(trouverCursus(idCursus));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CursusCoursResponse> listerCours(Integer idCursus) {
+        trouverCursus(idCursus);
+        return cursusCoursRepository.findByCursusIdAvecCours(idCursus)
+                .stream()
+                .map(CursusCoursResponse::depuis)
+                .toList();
     }
 
     @Transactional

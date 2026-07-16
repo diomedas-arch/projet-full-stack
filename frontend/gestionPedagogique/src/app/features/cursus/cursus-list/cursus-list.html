@@ -1,0 +1,87 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Cursus</h1>
+      <p>{{ cursusFiltres().length }} cursus</p>
+    </div>
+  </header>
+
+  <form class="form-actions" [formGroup]="form" (ngSubmit)="enregistrer()">
+    <mat-form-field appearance="outline">
+      <mat-label>Filière</mat-label>
+      <mat-select formControlName="idFiliere">
+        @for (filiere of filieres(); track filiere.id) {
+          <mat-option [value]="filiere.id">{{ filiere.libelle }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="titre" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Niveau</mat-label>
+      <input matInput formControlName="niveau" />
+    </mat-form-field>
+
+    <button class="button button-primary" type="submit">{{ idEdition() ? 'Modifier' : 'Ajouter' }}</button>
+    @if (idEdition()) {
+      <button class="button button-secondary" type="button" (click)="annuler()">Annuler</button>
+    }
+  </form>
+
+  <div class="filtres-ligne">
+    <mat-form-field appearance="outline" class="recherche">
+      <mat-label>Rechercher un cursus</mat-label>
+      <input matInput [value]="recherche()" (input)="rechercher($any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="recherche">
+      <mat-label>Filtrer par filière</mat-label>
+      <mat-select [value]="filtreFiliere()" (selectionChange)="filtrerFiliere($event.value)">
+        <mat-option [value]="null">Toutes les filières</mat-option>
+        @for (filiere of filieres(); track filiere.id) {
+          <mat-option [value]="filiere.id">{{ filiere.libelle }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="cursusFiltres()" class="table">
+      <ng-container matColumnDef="titre">
+        <th mat-header-cell *matHeaderCellDef>Titre</th>
+        <td mat-cell *matCellDef="let element">{{ element.titre }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="filiere">
+        <th mat-header-cell *matHeaderCellDef>Filière</th>
+        <td mat-cell *matCellDef="let element">{{ element.libelleFiliere }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="niveau">
+        <th mat-header-cell *matHeaderCellDef>Niveau</th>
+        <td mat-cell *matCellDef="let element">{{ element.niveau || 'Non renseigné' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element" class="actions-cell">
+          <button class="button button-small button-secondary" type="button" (click)="editer(element)">
+            Modifier
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    @if (cursusFiltres().length === 0) {
+      <p class="etat-vide">
+        {{ recherche() || filtreFiliere() ? 'Aucun cursus ne correspond aux filtres.' : 'Aucun cursus enregistré.' }}
+      </p>
+    }
+  </div>
+</section>

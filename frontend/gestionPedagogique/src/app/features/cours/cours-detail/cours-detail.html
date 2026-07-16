@@ -1,1 +1,35 @@
-<p>cours-detail works!</p>
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Détail du cours</h1>
+      <p class="page-subtitle">Consultation rapide des informations d'un cours.</p>
+    </div>
+
+    <a class="button button-secondary" routerLink="/cours">Retour</a>
+  </header>
+
+  @if (chargement()) {
+    <div class="etat-centre">
+      <mat-spinner diameter="32" />
+      <span>Chargement du cours...</span>
+    </div>
+  } @else if (introuvable()) {
+    <div class="detail-card etat-vide">Cours introuvable.</div>
+  } @else if (cours(); as c) {
+    <article class="detail-card">
+      <div>
+        <span class="label">Code</span>
+        <strong class="mono">{{ c.code }}</strong>
+      </div>
+
+      <div>
+        <span class="label">Titre</span>
+        <strong>{{ c.titre }}</strong>
+      </div>
+
+      <div class="detail-actions">
+        <a class="button button-primary" [routerLink]="['/cours', c.id, 'modifier']">Modifier</a>
+      </div>
+    </article>
+  }
+</section>

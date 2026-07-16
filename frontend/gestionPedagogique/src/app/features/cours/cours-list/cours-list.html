@@ -1,10 +1,7 @@
 <div class="page">
   <header class="page-header">
     <h1>Cours</h1>
-    <a mat-flat-button color="primary" routerLink="/cours/nouveau">
-      <mat-icon>add</mat-icon>
-      Nouveau cours
-    </a>
+    <a class="button button-primary" routerLink="/cours/nouveau">Nouveau cours</a>
   </header>
 
   <mat-form-field appearance="outline" class="recherche">
@@ -15,7 +12,6 @@
       [value]="recherche()"
       (input)="onRecherche($any($event.target).value)"
     />
-    <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <div class="table-container">
@@ -33,11 +29,10 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
         <td mat-cell *matCellDef="let c" class="actions-cell">
-          <a mat-icon-button [routerLink]="['/cours', c.id, 'modifier']" aria-label="Modifier">
-            <mat-icon>edit</mat-icon>
-          </a>
-          <button mat-icon-button (click)="supprimer(c)" aria-label="Supprimer">
-            <mat-icon>delete</mat-icon>
+          <a class="button button-small button-secondary" [routerLink]="['/cours', c.id]">Voir</a>
+          <a class="button button-small button-secondary" [routerLink]="['/cours', c.id, 'modifier']">Modifier</a>
+          <button class="button button-small button-danger" type="button" (click)="supprimer(c)">
+            Supprimer
           </button>
         </td>
       </ng-container>

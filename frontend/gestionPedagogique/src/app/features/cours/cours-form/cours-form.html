@@ -23,8 +23,8 @@
   </div>
 
   <div class="form-actions">
-    <button mat-button type="button" (click)="annuler()">Annuler</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="enregistrementEnCours()">
+    <button class="button button-secondary" type="button" (click)="annuler()">Annuler</button>
+    <button class="button button-primary" type="submit" [disabled]="enregistrementEnCours()">
       @if (enregistrementEnCours()) {
         <mat-spinner diameter="18" />
       } @else {

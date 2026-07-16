@@ -1,8 +1,10 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
+import { AuthService } from '../auth/auth.service';
 import { ApiError } from './api-error.model';
 import { SKIP_ERROR_NOTIFICATION } from './skip-error-notification';
 
@@ -11,10 +13,31 @@ import { SKIP_ERROR_NOTIFICATION } from './skip-error-notification';
 // et ne remonte jamais l'objet JSON brut à l'utilisateur.
 export const apiErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
+  const auth = inject(AuthService);
+  const router = inject(Router);
 
   return next(req).pipe(
     catchError((error: unknown) => {
       const apiError = toApiError(error);
+      const loginRequest = req.url.includes('/api/auth/login');
+
+      if (apiError.status === 401 && !loginRequest) {
+        const returnUrl = router.url && router.url !== '/login' ? router.url : '/accueil';
+        auth.logout();
+        router.navigate(['/login'], {
+          queryParams: { session: 'expiree', returnUrl }
+        });
+        return throwError(() => ({
+          ...apiError,
+          message: 'Votre session a expiré. Veuillez vous reconnecter.'
+        } satisfies ApiError));
+      }
+
+      if (apiError.status === 403 && !loginRequest) {
+        router.navigate(['/accueil'], {
+          queryParams: { acces: 'refuse' }
+        });
+      }
 
       if (!req.context.get(SKIP_ERROR_NOTIFICATION)) {
         snackBar.open(apiError.message, 'Fermer', {

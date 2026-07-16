@@ -1,12 +1,70 @@
-<nav class="nav-principale">
-  <span class="nav-titre">Gestion pédagogique</span>
-  <div class="nav-liens">
-    @for (lien of liens; track lien.path) {
-      <a [routerLink]="lien.path" routerLinkActive="actif">{{ lien.label }}</a>
-    }
-  </div>
-</nav>
+@if (afficherShell()) {
+  <div class="app-shell" [class.menu-open]="menuOuvert()">
+    <aside class="sidebar" aria-label="Navigation principale">
+      <a class="brand" routerLink="/accueil" (click)="fermerMenu()">
+        <span class="brand-mark">SP</span>
+        <span class="brand-copy">
+          <strong>Service pédagogique</strong>
+          <span>Gestion des formations</span>
+        </span>
+      </a>
 
-<main class="contenu">
+      <p class="nav-label">Navigation</p>
+      <nav class="main-nav">
+        @for (lien of liens(); track lien.path) {
+          <a
+            class="nav-link"
+            [routerLink]="lien.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: lien.path === '/accueil' }"
+            ariaCurrentWhenActive="page"
+            (click)="fermerMenu()"
+          >
+            <span class="nav-icon" aria-hidden="true">{{ lien.icon }}</span>
+            {{ lien.label }}
+          </a>
+        }
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <span class="user-avatar" aria-hidden="true">{{ initiale() }}</span>
+          <span class="user-details">
+            <strong>{{ auth.utilisateur()?.email }}</strong>
+            <span>{{ roleLibelle() }}</span>
+          </span>
+        </div>
+        <button class="logout-button" type="button" (click)="deconnecter()">Se déconnecter</button>
+      </div>
+    </aside>
+
+    <button
+      class="menu-backdrop"
+      type="button"
+      aria-label="Fermer le menu"
+      [attr.aria-hidden]="!menuOuvert()"
+      (click)="fermerMenu()"
+    ></button>
+
+    <div class="app-main">
+      <header class="mobile-header">
+        <button
+          class="menu-button"
+          type="button"
+          aria-label="Ouvrir le menu"
+          [attr.aria-expanded]="menuOuvert()"
+          (click)="ouvrirMenu()"
+        >
+          Menu
+        </button>
+        <strong>Service pédagogique</strong>
+      </header>
+
+      <main class="page-content">
+        <router-outlet />
+      </main>
+    </div>
+  </div>
+} @else {
   <router-outlet />
-</main>
+}

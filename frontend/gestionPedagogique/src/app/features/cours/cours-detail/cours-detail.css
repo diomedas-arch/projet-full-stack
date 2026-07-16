@@ -1,0 +1,32 @@
+.page-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--ardoise);
+}
+
+.detail-card {
+  background: var(--papier-white);
+  border: 1px solid var(--craie);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--ardoise);
+  font-size: 0.85rem;
+}
+
+.detail-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.etat-centre {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ardoise);
+}

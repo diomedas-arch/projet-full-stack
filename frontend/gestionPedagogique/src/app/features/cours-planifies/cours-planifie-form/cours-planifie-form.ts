@@ -1,8 +1,7 @@
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Component, OnInit, computed, effect, inject, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -10,21 +9,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
 
 import { ApiError } from '../../../core/http/api-error.model';
 import { skipErrorNotification } from '../../../core/http/skip-error-notification';
+import { CursusCours } from '../../../core/models/cursus-cours.model';
+import { FormateurDisponible } from '../../../core/models/formateur.model';
+import { CursusCoursService } from '../../../core/services/cursus-cours.service';
+import { FormateurService } from '../../../core/services/formateur.service';
 import { Promotion } from '../../promotions/promotion.model';
 import { PromotionService } from '../../promotions/promotion.service';
-import { CoursPlanifieService } from '../cours-planifie.service';
-import { CURSUS_COURS_TEMPORAIRE } from '../cursus-cours-temporaire.data';
-import { FORMATEUR_TEMPORAIRE } from '../formateur-temporaire.data';
+import { CoursPlanifie } from '../cours-planifie.model';
+import { CoursPlanifieRequest, CoursPlanifieService } from '../cours-planifie.service';
 
 @Component({
   selector: 'app-cours-planifie-form',
   imports: [
     ReactiveFormsModule,
     MatButtonModule,
-    MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -39,21 +41,23 @@ export class CoursPlanifieForm implements OnInit {
 
   private readonly coursPlanifieService = inject(CoursPlanifieService);
   private readonly promotionService = inject(PromotionService);
+  private readonly cursusCoursService = inject(CursusCoursService);
+  private readonly formateurService = inject(FormateurService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly fb = inject(FormBuilder);
 
-  private ignorerProchainResetCursusCours = false;
-
   protected readonly modeEdition = computed(() => !!this.id());
+  protected readonly chargementInitial = signal(false);
+  protected readonly chargementCours = signal(false);
   protected readonly enregistrementEnCours = signal(false);
   protected readonly erreurGenerale = signal<string | null>(null);
+  protected readonly erreurCours = signal<string | null>(null);
   protected readonly dateFinErreurBackend = signal<string | null>(null);
-  protected readonly coursErreurBackend = signal<string | null>(null);
 
   protected readonly promotions = signal<Promotion[]>([]);
-  protected readonly cursusCoursTemporaire = CURSUS_COURS_TEMPORAIRE;
-  protected readonly formateurTemporaire = FORMATEUR_TEMPORAIRE;
+  protected readonly cursusCoursDisponibles = signal<CursusCours[]>([]);
+  protected readonly formateurs = signal<FormateurDisponible[]>([]);
 
   protected readonly statuts = [
     { valeur: 'PLANIFIE', label: 'Planifié' },
@@ -62,7 +66,7 @@ export class CoursPlanifieForm implements OnInit {
     { valeur: 'ANNULE', label: 'Annulé' }
   ];
 
-  protected readonly form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.group({
     idPromotion: [null as number | null, Validators.required],
     idCursusCours: [null as number | null, Validators.required],
     idFormateur: [null as number | null],
@@ -72,57 +76,37 @@ export class CoursPlanifieForm implements OnInit {
     statut: ['PLANIFIE', Validators.required]
   });
 
-  private readonly idPromotionSignal = toSignal(this.form.controls.idPromotion.valueChanges, {
-    initialValue: null
-  });
-
-  protected readonly cursusCoursDisponibles = computed(() => {
-    const promotion = this.promotions().find((p) => p.id === this.idPromotionSignal());
-    if (!promotion) {
-      return [];
-    }
-
-    return this.cursusCoursTemporaire.filter((cc) => cc.idCursus === promotion.idCursus);
-  });
-
   constructor() {
-    effect(() => {
-      const idValeur = this.id();
-      if (idValeur) {
-        this.ignorerProchainResetCursusCours = true;
-        this.coursPlanifieService.consulter(Number(idValeur)).subscribe((coursPlanifie) => {
-          this.form.patchValue({
-            idPromotion: coursPlanifie.idPromotion,
-            idCursusCours: coursPlanifie.idCursusCours,
-            idFormateur: coursPlanifie.idFormateur,
-            dateDebut: versDatetimeLocal(coursPlanifie.dateDebut),
-            dateFin: versDatetimeLocal(coursPlanifie.dateFin),
-            salle: coursPlanifie.salle,
-            statut: coursPlanifie.statut
-          });
-        });
-      }
-    });
-
-    this.form.controls.idPromotion.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
-      if (this.ignorerProchainResetCursusCours) {
-        this.ignorerProchainResetCursusCours = false;
-        return;
-      }
-      this.form.controls.idCursusCours.setValue(null);
+    this.form.controls.idPromotion.valueChanges.pipe(takeUntilDestroyed()).subscribe((idPromotion) => {
+      this.chargerCoursPourPromotion(idPromotion, true);
     });
 
     this.form.controls.dateFin.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.dateFinErreurBackend.set(null));
 
-    this.form.controls.idCursusCours.valueChanges
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => this.coursErreurBackend.set(null));
+    this.form.controls.idCursusCours.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.erreurCours.set(null));
   }
 
   ngOnInit(): void {
-    this.promotionService.lister().subscribe((data) => this.promotions.set(data));
+    this.chargementInitial.set(true);
+    const idCoursPlanifie = this.id();
+
+    forkJoin({
+      promotions: this.promotionService.lister(),
+      formateurs: this.formateurService.lister({ actif: true }),
+      coursPlanifie: idCoursPlanifie ? this.coursPlanifieService.consulter(Number(idCoursPlanifie)) : of(null)
+    }).subscribe({
+      next: ({ promotions, formateurs, coursPlanifie }) => {
+        this.promotions.set(promotions);
+        this.formateurs.set(formateurs);
+        if (coursPlanifie) {
+          this.appliquerCoursPlanifie(coursPlanifie);
+        }
+      },
+      error: (erreur: ApiError) => this.erreurGenerale.set(erreur.message),
+      complete: () => this.chargementInitial.set(false)
+    });
   }
 
   protected enregistrer(): void {
@@ -133,18 +117,18 @@ export class CoursPlanifieForm implements OnInit {
 
     this.erreurGenerale.set(null);
     this.dateFinErreurBackend.set(null);
-    this.coursErreurBackend.set(null);
+    this.erreurCours.set(null);
     this.enregistrementEnCours.set(true);
 
     const valeur = this.form.getRawValue();
-    const requete = {
+    const requete: CoursPlanifieRequest = {
       idPromotion: valeur.idPromotion as number,
       idCursusCours: valeur.idCursusCours as number,
-      idFormateur: valeur.idFormateur,
-      dateDebut: valeur.dateDebut,
-      dateFin: valeur.dateFin,
-      salle: valeur.salle || null,
-      statut: valeur.statut
+      idFormateur: valeur.idFormateur ?? null,
+      dateDebut: valeur.dateDebut ?? '',
+      dateFin: valeur.dateFin ?? '',
+      salle: valeur.salle?.trim() || null,
+      statut: valeur.statut ?? 'PLANIFIE'
     };
     const contexte = skipErrorNotification();
 
@@ -166,29 +150,79 @@ export class CoursPlanifieForm implements OnInit {
     });
   }
 
+  protected annuler(): void {
+    this.router.navigate(['/cours-planifies']);
+  }
+
+  protected libelleFormateur(formateur: FormateurDisponible): string {
+    const email = formateur.email ?? 'Sans compte utilisateur';
+    return formateur.specialite ? `${email} - ${formateur.specialite}` : email;
+  }
+
+  private appliquerCoursPlanifie(coursPlanifie: CoursPlanifie): void {
+    this.form.patchValue(
+      {
+        idPromotion: coursPlanifie.idPromotion,
+        idCursusCours: null,
+        idFormateur: coursPlanifie.idFormateur,
+        dateDebut: versDatetimeLocal(coursPlanifie.dateDebut),
+        dateFin: versDatetimeLocal(coursPlanifie.dateFin),
+        salle: coursPlanifie.salle ?? '',
+        statut: coursPlanifie.statut
+      },
+      { emitEvent: false }
+    );
+    this.chargerCoursPourPromotion(coursPlanifie.idPromotion, false, coursPlanifie.idCursusCours);
+  }
+
+  private chargerCoursPourPromotion(
+    idPromotion: number | null,
+    resetSelection: boolean,
+    selectionApresChargement: number | null = null
+  ): void {
+    if (resetSelection) {
+      this.form.controls.idCursusCours.setValue(null, { emitEvent: false });
+    }
+
+    const promotion = this.promotions().find((element) => element.id === idPromotion);
+    if (!promotion) {
+      this.cursusCoursDisponibles.set([]);
+      return;
+    }
+
+    this.chargementCours.set(true);
+    this.erreurCours.set(null);
+    this.cursusCoursService.listerParCursus(promotion.idCursus).subscribe({
+      next: (cours) => {
+        this.cursusCoursDisponibles.set(cours);
+        if (selectionApresChargement != null) {
+          this.form.controls.idCursusCours.setValue(selectionApresChargement, { emitEvent: false });
+        }
+      },
+      error: (erreur: ApiError) => {
+        this.cursusCoursDisponibles.set([]);
+        this.erreurCours.set(erreur.message);
+      },
+      complete: () => this.chargementCours.set(false)
+    });
+  }
+
   private gererErreur(erreur: ApiError): void {
     this.enregistrementEnCours.set(false);
 
     if (erreur.details && Object.keys(erreur.details).length > 0) {
-      const messages = Object.values(erreur.details);
-      this.erreurGenerale.set(messages.join(' '));
+      this.erreurGenerale.set(Object.values(erreur.details).join(' '));
       return;
     }
 
     const message = erreur.message ?? '';
     if (message.includes('date de fin')) {
       this.dateFinErreurBackend.set(message);
-    } else if (message.includes('même cursus')) {
-      this.coursErreurBackend.set(message);
+    } else if (message.includes('cursus') || message.includes('planifié')) {
+      this.erreurCours.set(message);
     } else {
-      // Couvre notamment le doublon de couple promotion/cours du cursus,
-      // qui n'est rattaché à aucun champ précis.
       this.erreurGenerale.set(message);
     }
-  }
-
-  protected annuler(): void {
-    this.router.navigate(['/cours-planifies']);
   }
 }
 
