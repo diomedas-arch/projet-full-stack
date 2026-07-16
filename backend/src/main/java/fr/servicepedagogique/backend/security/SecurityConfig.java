@@ -38,13 +38,17 @@ public class SecurityConfig {
                                 "/accueil.html",
                                 "/filieres.html",
                                 "/cursus.html",
+                                "/eleves.html",
+                                "/eleve-form.html",
+                                "/utilisateurs.html",
+                                "/utilisateur-form.html",
                                 "/css/**",
                                 "/js/**",
                                 "/favicon.ico"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/filieres/**", "/api/cursus/**").authenticated()
-                        .requestMatchers("/api/filieres/**", "/api/cursus/**").hasAnyAuthority(
+                        .requestMatchers("/api/filieres/**", "/api/cursus/**", "/api/eleves/**").hasAnyAuthority(
                                 RoleUtilisateur.ROLE_REFERENTE.name(),
                                 RoleUtilisateur.ROLE_ADMIN.name()
                         )

@@ -91,6 +91,12 @@ public class UtilisateurService {
         return UtilisateurResponse.depuis(utilisateur);
     }
 
+    @Transactional
+    public void supprimer(Integer idUtilisateur) {
+        Utilisateur utilisateur = trouverUtilisateur(idUtilisateur);
+        utilisateurRepository.delete(utilisateur);
+    }
+
     private Utilisateur trouverUtilisateur(Integer idUtilisateur) {
         return utilisateurRepository.findById(idUtilisateur)
                 .orElseThrow(() -> new RessourceIntrouvableException("Utilisateur introuvable."));

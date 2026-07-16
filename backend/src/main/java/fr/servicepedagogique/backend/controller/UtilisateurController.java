@@ -8,6 +8,7 @@ import fr.servicepedagogique.backend.dto.utilisateur.ModifierUtilisateurRequest;
 import fr.servicepedagogique.backend.dto.utilisateur.UtilisateurResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -67,5 +68,11 @@ public class UtilisateurController {
             @Valid @RequestBody ChangerMotDePasseRequest request
     ) {
         return utilisateurService.changerMotDePasse(idUtilisateur, request);
+    }
+
+    @DeleteMapping("/{idUtilisateur}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void supprimer(@PathVariable Integer idUtilisateur) {
+        utilisateurService.supprimer(idUtilisateur);
     }
 }

@@ -18,6 +18,11 @@ export function initialiserLayout(pageActive, session) {
         element.hidden = !peutGerer;
     });
 
+    const estAdmin = session.utilisateur.role === "ROLE_ADMIN";
+    document.querySelectorAll("[data-admin-only]").forEach((element) => {
+        element.hidden = !estAdmin;
+    });
+
     document.querySelectorAll("[data-logout]").forEach((button) => {
         button.addEventListener("click", () => {
             supprimerSession();

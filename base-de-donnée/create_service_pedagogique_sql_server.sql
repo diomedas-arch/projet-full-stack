@@ -64,6 +64,32 @@ CREATE TABLE ELEVE (
 );
 GO
 
+CREATE OR ALTER TRIGGER TR_UTILISATEUR_AJOUT_ELEVE
+ON UTILISATEUR
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO ELEVE (
+        id_utilisateur,
+        numero_dossier,
+        telephone
+    )
+    SELECT
+        i.id_utilisateur,
+        CONCAT(N'ELV-', RIGHT(CONCAT(N'000000', CAST(i.id_utilisateur AS NVARCHAR(20))), 6)),
+        NULL
+    FROM inserted i
+    WHERE i.role = N'ROLE_ELEVE'
+      AND NOT EXISTS (
+          SELECT 1
+          FROM ELEVE e
+          WHERE e.id_utilisateur = i.id_utilisateur
+      );
+END;
+GO
+
 CREATE TABLE FORMATEUR (
     id_formateur INT IDENTITY(1,1) PRIMARY KEY,
     id_utilisateur INT NULL, -- optionnel : utile si le formateur se connecte à l'application

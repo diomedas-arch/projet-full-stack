@@ -316,6 +316,17 @@ h1 {
     background: #fafbfc;
 }
 
+.button-danger {
+    color: var(--danger);
+    background: var(--danger-soft);
+    border-color: #ffd1d8;
+}
+
+.button-danger:hover:not(:disabled) {
+    background: #ffe5e9;
+    border-color: #ffb8c2;
+}
+
 .button-small {
     min-height: 34px;
     padding: 6px 11px;
@@ -559,9 +570,32 @@ h1 {
     font-weight: 750;
 }
 
+.pill.success {
+    color: var(--success);
+    background: var(--success-soft);
+}
+
+.pill.warning {
+    color: var(--warning);
+    background: var(--warning-soft);
+}
+
+.pill.danger {
+    color: var(--danger);
+    background: var(--danger-soft);
+}
+
 .actions-cell {
     width: 1%;
     white-space: nowrap;
+}
+
+.actions-cell .button + .button {
+    margin-left: 8px;
+}
+
+.form-page-card {
+    max-width: 760px;
 }
 
 .form-card {
