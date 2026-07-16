@@ -51,7 +51,8 @@ public class SecurityConfig {
                                 "/favicon.ico"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/promotions/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/promotions/**", "/api/cours/**", "/api/cours-planifies/**")
+                        .authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/filieres/**", "/api/cursus/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/me/**").hasAnyAuthority(
                                 RoleUtilisateur.ROLE_ELEVE.name(),
@@ -61,7 +62,14 @@ public class SecurityConfig {
                                 RoleUtilisateur.ROLE_FORMATEUR.name(),
                                 RoleUtilisateur.ROLE_ADMIN.name()
                         )
-                        .requestMatchers("/api/filieres/**", "/api/cursus/**", "/api/eleves/**").hasAnyAuthority(
+                        .requestMatchers(
+                                "/api/filieres/**",
+                                "/api/cursus/**",
+                                "/api/eleves/**",
+                                "/api/promotions/**",
+                                "/api/cours/**",
+                                "/api/cours-planifies/**"
+                        ).hasAnyAuthority(
                                 RoleUtilisateur.ROLE_REFERENTE.name(),
                                 RoleUtilisateur.ROLE_ADMIN.name()
                         )

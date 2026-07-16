@@ -1,0 +1,12 @@
+<nav class="nav-principale">
+  <span class="nav-titre">Gestion pédagogique</span>
+  <div class="nav-liens">
+    @for (lien of liens; track lien.path) {
+      <a [routerLink]="lien.path" routerLinkActive="actif">{{ lien.label }}</a>
+    }
+  </div>
+</nav>
+
+<main class="contenu">
+  <router-outlet />
+</main>

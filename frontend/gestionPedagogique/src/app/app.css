@@ -1,0 +1,33 @@
+.nav-principale {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 1.5rem;
+  height: 56px;
+  background: var(--encre);
+  color: white;
+}
+
+.nav-titre {
+  font-weight: 600;
+}
+
+.nav-liens {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.nav-liens a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.nav-liens a:hover {
+  color: white;
+}
+
+.nav-liens a.actif {
+  color: white;
+  font-weight: 500;
+}

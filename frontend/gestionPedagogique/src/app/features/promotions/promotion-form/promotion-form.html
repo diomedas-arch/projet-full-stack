@@ -1,0 +1,56 @@
+<form class="form-page" [formGroup]="form" (ngSubmit)="enregistrer()">
+  <h1>{{ modeEdition() ? 'Modifier la promotion' : 'Nouvelle promotion' }}</h1>
+
+  <div class="form-champs">
+    <mat-form-field appearance="outline">
+      <mat-label>Cursus</mat-label>
+      <mat-select formControlName="idCursus">
+        @for (cursus of cursusListe(); track cursus.id) {
+          <mat-option [value]="cursus.id">{{ cursus.titre }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.idCursus.hasError('required') && form.controls.idCursus.touched) {
+        <mat-error>Le cursus est obligatoire.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Libellé</mat-label>
+      <input matInput formControlName="libelle" />
+      @if (form.controls.libelle.hasError('required') && form.controls.libelle.touched) {
+        <mat-error>Le libellé est obligatoire.</mat-error>
+      }
+      @if (libelleErreurBackend()) {
+        <mat-error>{{ libelleErreurBackend() }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Période</mat-label>
+      <input matInput formControlName="periode" placeholder="Septembre 2026 - Juillet 2027" />
+      @if (form.controls.periode.hasError('required') && form.controls.periode.touched) {
+        <mat-error>La période est obligatoire.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        @for (statut of statuts; track statut.valeur) {
+          <mat-option [value]="statut.valeur">{{ statut.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="annuler()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="enregistrementEnCours()">
+      @if (enregistrementEnCours()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ modeEdition() ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </div>
+</form>

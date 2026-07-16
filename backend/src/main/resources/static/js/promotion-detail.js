@@ -71,7 +71,7 @@ if (!idPromotion) {
     afficherEtat("Identifiant de promotion manquant.");
 } else {
     try {
-        const detail = await apiFetch(`/api/promotions/${idPromotion}`);
+        const detail = await apiFetch(`/api/promotions/${idPromotion}/detail`);
         titre.textContent = detail.promotion.libelle;
         description.textContent = `${detail.promotion.titreCursus} - ${detail.promotion.libelleFiliere} - ${detail.promotion.periode}`;
         afficherCours(detail.cours);

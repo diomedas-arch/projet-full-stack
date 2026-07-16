@@ -31,6 +31,12 @@ public class GestionErreurControllerAdvice {
         return ApiError.simple(HttpStatus.CONFLICT, exception.getMessage(), request);
     }
 
+    @ExceptionHandler(CodeCoursDejaUtiliseException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError codeCoursDejaUtilise(CodeCoursDejaUtiliseException exception, HttpServletRequest request) {
+        return ApiError.simple(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
     @ExceptionHandler(DonneeDejaExistanteException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError donneeDejaExistante(

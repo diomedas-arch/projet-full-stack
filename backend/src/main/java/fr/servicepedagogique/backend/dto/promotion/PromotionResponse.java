@@ -3,6 +3,7 @@ package fr.servicepedagogique.backend.dto.promotion;
 import fr.servicepedagogique.backend.bo.Promotion;
 
 public record PromotionResponse(
+        Integer id,
         Integer idPromotion,
         String libelle,
         String periode,
@@ -15,6 +16,7 @@ public record PromotionResponse(
 
     public static PromotionResponse depuis(Promotion promotion) {
         return new PromotionResponse(
+                promotion.getIdPromotion(),
                 promotion.getIdPromotion(),
                 promotion.getLibelle(),
                 promotion.getPeriode(),
