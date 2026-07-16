@@ -1,1 +1,35 @@
-<p>cours-form works!</p>
+<form class="form-page" [formGroup]="form" (ngSubmit)="enregistrer()">
+  <h1>{{ modeEdition() ? 'Modifier le cours' : 'Nouveau cours' }}</h1>
+
+  <div class="form-champs">
+    <mat-form-field appearance="outline">
+      <mat-label>Code</mat-label>
+      <input matInput formControlName="code" class="mono" />
+      @if (form.controls.code.hasError('required') && form.controls.code.touched) {
+        <mat-error>Le code est obligatoire.</mat-error>
+      }
+      @if (codeErreurBackend()) {
+        <mat-error>{{ codeErreurBackend() }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="titre" />
+      @if (form.controls.titre.hasError('required') && form.controls.titre.touched) {
+        <mat-error>Le titre est obligatoire.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="annuler()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="enregistrementEnCours()">
+      @if (enregistrementEnCours()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ modeEdition() ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </div>
+</form>

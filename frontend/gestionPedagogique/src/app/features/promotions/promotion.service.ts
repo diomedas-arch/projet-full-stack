@@ -1,8 +1,15 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Promotion } from './promotion.model';
+
+export interface PromotionRequest {
+  idCursus: number;
+  libelle: string;
+  periode: string;
+  statut: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +26,12 @@ export class PromotionService {
     return this.http.get<Promotion>(`${this.baseUrl}/${id}`);
   }
 
-  creer(promotion: Promotion): Observable<Promotion> {
-    return this.http.post<Promotion>(this.baseUrl, promotion);
+  creer(promotion: PromotionRequest, context?: HttpContext): Observable<Promotion> {
+    return this.http.post<Promotion>(this.baseUrl, promotion, { context });
   }
 
-  modifier(id: number, promotion: Promotion): Observable<Promotion> {
-    return this.http.put<Promotion>(`${this.baseUrl}/${id}`, promotion);
+  modifier(id: number, promotion: PromotionRequest, context?: HttpContext): Observable<Promotion> {
+    return this.http.put<Promotion>(`${this.baseUrl}/${id}`, promotion, { context });
   }
 
   supprimer(id: number): Observable<void> {

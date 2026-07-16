@@ -1,0 +1,52 @@
+// Thème Angular Material — remplace le violet/rose par défaut par la charte graphique
+// (--cobalt en primaire, --encre en accent sombre). Les palettes M3 ci-dessous ne servent
+// qu'à générer un jeu de tokens cohérent (états hover/focus, élévation...) ; les couleurs
+// visibles sont ensuite surchargées avec les tokens CSS définis dans styles.css.
+@use '@angular/material' as mat;
+
+$gestion-pedagogique-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$blue-palette,
+    tertiary: mat.$azure-palette,
+  ),
+  typography: (
+    plain-family: 'IBM Plex Sans, sans-serif',
+    brand-family: 'IBM Plex Sans, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  ),
+));
+
+html {
+  @include mat.core();
+  @include mat.all-component-themes($gestion-pedagogique-theme);
+
+  --mat-sys-primary: var(--cobalt);
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: var(--cobalt-bg);
+  --mat-sys-on-primary-container: var(--encre);
+
+  --mat-sys-secondary: var(--encre);
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: var(--cobalt-bg);
+  --mat-sys-on-secondary-container: var(--encre);
+
+  --mat-sys-tertiary: var(--ocre);
+  --mat-sys-on-tertiary: #ffffff;
+
+  --mat-sys-error: var(--statut-annule);
+  --mat-sys-on-error: #ffffff;
+
+  --mat-sys-surface: var(--papier-white);
+  --mat-sys-on-surface: var(--encre);
+  --mat-sys-surface-variant: var(--papier);
+  --mat-sys-on-surface-variant: var(--ardoise);
+
+  --mat-sys-outline: var(--craie);
+  --mat-sys-outline-variant: var(--craie);
+
+  --mat-sys-background: var(--papier);
+  --mat-sys-on-background: var(--encre);
+}

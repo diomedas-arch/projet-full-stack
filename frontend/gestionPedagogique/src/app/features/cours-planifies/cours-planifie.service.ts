@@ -1,8 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { CoursPlanifie } from './cours-planifie.model';
+
+export interface CoursPlanifieRequest {
+  idPromotion: number;
+  idCursusCours: number;
+  idFormateur: number | null;
+  dateDebut: string;
+  dateFin: string;
+  salle: string | null;
+  statut: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +29,16 @@ export class CoursPlanifieService {
     return this.http.get<CoursPlanifie>(`${this.baseUrl}/${id}`);
   }
 
-  creer(coursPlanifie: CoursPlanifie): Observable<CoursPlanifie> {
-    return this.http.post<CoursPlanifie>(this.baseUrl, coursPlanifie);
+  creer(coursPlanifie: CoursPlanifieRequest, context?: HttpContext): Observable<CoursPlanifie> {
+    return this.http.post<CoursPlanifie>(this.baseUrl, coursPlanifie, { context });
   }
 
-  modifier(id: number, coursPlanifie: CoursPlanifie): Observable<CoursPlanifie> {
-    return this.http.put<CoursPlanifie>(`${this.baseUrl}/${id}`, coursPlanifie);
+  modifier(
+    id: number,
+    coursPlanifie: CoursPlanifieRequest,
+    context?: HttpContext
+  ): Observable<CoursPlanifie> {
+    return this.http.put<CoursPlanifie>(`${this.baseUrl}/${id}`, coursPlanifie, { context });
   }
 
   supprimer(id: number): Observable<void> {

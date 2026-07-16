@@ -1,1 +1,98 @@
-<p>cours-planifie-form works!</p>
+<form class="form-page" [formGroup]="form" (ngSubmit)="enregistrer()">
+  <h1>{{ modeEdition() ? 'Modifier le cours planifié' : 'Nouveau cours planifié' }}</h1>
+
+  <div class="bandeau-info">
+    <mat-icon>info</mat-icon>
+    <span>
+      Le cours choisi doit appartenir au même cursus que la promotion sélectionnée — la liste des
+      cours se filtre automatiquement selon le cursus de la promotion.
+    </span>
+  </div>
+
+  @if (erreurGenerale()) {
+    <div class="bandeau-erreur">{{ erreurGenerale() }}</div>
+  }
+
+  <div class="form-champs">
+    <mat-form-field appearance="outline">
+      <mat-label>Promotion</mat-label>
+      <mat-select formControlName="idPromotion">
+        @for (promotion of promotions(); track promotion.id) {
+          <mat-option [value]="promotion.id">{{ promotion.libelle }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.idPromotion.hasError('required') && form.controls.idPromotion.touched) {
+        <mat-error>La promotion est obligatoire.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cours du cursus</mat-label>
+      <mat-select formControlName="idCursusCours">
+        @for (cursusCours of cursusCoursDisponibles(); track cursusCours.idCursusCours) {
+          <mat-option [value]="cursusCours.idCursusCours">{{ cursusCours.titreCours }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.idCursusCours.hasError('required') && form.controls.idCursusCours.touched) {
+        <mat-error>Le cours du cursus est obligatoire.</mat-error>
+      }
+      @if (coursErreurBackend()) {
+        <mat-error>{{ coursErreurBackend() }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Formateur</mat-label>
+      <mat-select formControlName="idFormateur">
+        <mat-option [value]="null">— Non assigné —</mat-option>
+        @for (formateur of formateurTemporaire; track formateur.idFormateur) {
+          <mat-option [value]="formateur.idFormateur">{{ formateur.specialite }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date et heure de début</mat-label>
+      <input matInput type="datetime-local" formControlName="dateDebut" />
+      @if (form.controls.dateDebut.hasError('required') && form.controls.dateDebut.touched) {
+        <mat-error>La date de début est obligatoire.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date et heure de fin</mat-label>
+      <input matInput type="datetime-local" formControlName="dateFin" />
+      @if (form.controls.dateFin.hasError('required') && form.controls.dateFin.touched) {
+        <mat-error>La date de fin est obligatoire.</mat-error>
+      }
+      @if (dateFinErreurBackend()) {
+        <mat-error>{{ dateFinErreurBackend() }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Salle</mat-label>
+      <input matInput formControlName="salle" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        @for (statut of statuts; track statut.valeur) {
+          <mat-option [value]="statut.valeur">{{ statut.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="form-actions">
+    <button mat-button type="button" (click)="annuler()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="enregistrementEnCours()">
+      @if (enregistrementEnCours()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        {{ modeEdition() ? 'Enregistrer' : 'Créer' }}
+      }
+    </button>
+  </div>
+</form>
