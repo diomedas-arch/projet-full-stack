@@ -102,6 +102,32 @@ CREATE TABLE FORMATEUR (
 );
 GO
 
+CREATE OR ALTER TRIGGER TR_UTILISATEUR_AJOUT_FORMATEUR
+ON UTILISATEUR
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO FORMATEUR (
+        id_utilisateur,
+        specialite,
+        actif
+    )
+    SELECT
+        i.id_utilisateur,
+        NULL,
+        1
+    FROM inserted i
+    WHERE i.role = N'ROLE_FORMATEUR'
+      AND NOT EXISTS (
+          SELECT 1
+          FROM FORMATEUR f
+          WHERE f.id_utilisateur = i.id_utilisateur
+      );
+END;
+GO
+
 CREATE TABLE CURSUS (
     id_cursus INT IDENTITY(1,1) PRIMARY KEY,
     id_filiere INT NOT NULL,
@@ -227,6 +253,7 @@ CREATE INDEX IX_CURSUS_COURS_id_cours ON CURSUS_COURS(id_cours);
 CREATE INDEX IX_PROMOTION_id_cursus ON PROMOTION(id_cursus);
 CREATE INDEX IX_COURS_PLANIFIE_id_promotion ON COURS_PLANIFIE(id_promotion);
 CREATE INDEX IX_COURS_PLANIFIE_id_cursus_cours ON COURS_PLANIFIE(id_cursus_cours);
+CREATE INDEX IX_COURS_PLANIFIE_id_formateur ON COURS_PLANIFIE(id_formateur);
 CREATE INDEX IX_INSCRIPTION_PROMO_id_eleve ON INSCRIPTION_PROMO(id_eleve);
 CREATE INDEX IX_INSCRIPTION_COURS_id_eleve ON INSCRIPTION_COURS(id_eleve);
 GO

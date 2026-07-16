@@ -23,6 +23,16 @@ export function initialiserLayout(pageActive, session) {
         element.hidden = !estAdmin;
     });
 
+    const estEleve = session.utilisateur.role === "ROLE_ELEVE";
+    document.querySelectorAll("[data-eleve-only]").forEach((element) => {
+        element.hidden = !estEleve;
+    });
+
+    const estFormateur = session.utilisateur.role === "ROLE_FORMATEUR";
+    document.querySelectorAll("[data-formateur-only]").forEach((element) => {
+        element.hidden = !estFormateur;
+    });
+
     document.querySelectorAll("[data-logout]").forEach((button) => {
         button.addEventListener("click", () => {
             supprimerSession();

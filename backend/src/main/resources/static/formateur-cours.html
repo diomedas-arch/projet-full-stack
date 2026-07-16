@@ -4,13 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#17203c">
-    <title>Gestion des utilisateurs - Service pédagogique</title>
+    <title>Mes cours - Service pédagogique</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 <div class="app-shell">
     <aside class="sidebar" aria-label="Navigation principale">
-        <a class="brand" href="/accueil.html"><span class="brand-mark">SP</span><span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span></a>
+        <a class="brand" href="/accueil.html">
+            <span class="brand-mark">SP</span>
+            <span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span>
+        </a>
         <p class="nav-label">Navigation</p>
         <nav class="main-nav">
             <a class="nav-link" data-nav="accueil" href="/accueil.html"><span class="nav-icon">A</span>Accueil</a>
@@ -23,44 +26,57 @@
             <a class="nav-link" data-nav="utilisateurs" data-admin-only href="/utilisateurs.html"><span class="nav-icon">U</span>Utilisateurs</a>
         </nav>
         <div class="sidebar-footer">
-            <div class="user-card"><span class="user-avatar" data-user-initial>U</span><span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span></div>
+            <div class="user-card">
+                <span class="user-avatar" data-user-initial>U</span>
+                <span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span>
+            </div>
             <button class="logout-button" type="button" data-logout>Se déconnecter</button>
         </div>
     </aside>
     <div class="menu-backdrop" data-menu-backdrop></div>
 
     <div class="app-main">
-        <header class="mobile-header"><button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button><strong>Service pédagogique</strong></header>
+        <header class="mobile-header">
+            <button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button>
+            <strong>Service pédagogique</strong>
+        </header>
+
         <main class="page-content">
             <header class="page-header">
                 <div>
-                    <p class="eyebrow">Administration</p>
-                    <h1>Gestion des utilisateurs</h1>
-                    <p class="page-description">Consultez les comptes, modifiez les accès ou supprimez un utilisateur.</p>
+                    <p class="eyebrow">Formateur</p>
+                    <h1>Mes cours</h1>
+                    <p class="page-description">Consultez les cours qui vous sont affectés ainsi que les élèves concernés. Cette page est en lecture seule.</p>
                 </div>
-                <a class="button button-primary" href="/utilisateur-form.html">Nouvel utilisateur</a>
             </header>
 
-            <section class="card" aria-labelledby="liste-utilisateurs-title">
+            <section class="card" aria-labelledby="formateur-cours-title">
                 <div class="card-header">
                     <div>
-                        <h2 id="liste-utilisateurs-title">Utilisateurs enregistrés</h2>
-                        <p><span data-utilisateur-count>0</span> utilisateur(s)</p>
-                    </div>
-                    <div class="toolbar">
-                        <input class="search-input" data-utilisateur-search type="search" placeholder="Rechercher un utilisateur" aria-label="Rechercher un utilisateur">
+                        <h2 id="formateur-cours-title">Cours affectés</h2>
+                        <p>Les élèves affichés proviennent des inscriptions à la promotion et à l’unité.</p>
                     </div>
                 </div>
                 <div class="table-wrap">
                     <table class="data-table">
-                        <thead><tr><th>Email</th><th>Rôle</th><th>Statut</th><th>Actions</th></tr></thead>
-                        <tbody data-utilisateur-list><tr><td colspan="4" class="state-cell">Chargement des utilisateurs…</td></tr></tbody>
+                        <thead>
+                        <tr>
+                            <th>Cours</th>
+                            <th>Promotion</th>
+                            <th>Date</th>
+                            <th>Salle</th>
+                            <th>Élèves concernés</th>
+                        </tr>
+                        </thead>
+                        <tbody data-formateur-cours-table>
+                        <tr><td colspan="5" class="state-cell">Chargement des cours…</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </section>
         </main>
     </div>
 </div>
-<script type="module" src="/js/utilisateurs.js"></script>
+<script type="module" src="/js/formateur-cours.js"></script>
 </body>
 </html>

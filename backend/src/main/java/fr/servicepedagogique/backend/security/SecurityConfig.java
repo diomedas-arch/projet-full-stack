@@ -36,6 +36,10 @@ public class SecurityConfig {
                                 "/index.html",
                                 "/login.html",
                                 "/accueil.html",
+                                "/promotions.html",
+                                "/promotion-detail.html",
+                                "/calendrier.html",
+                                "/formateur-cours.html",
                                 "/filieres.html",
                                 "/cursus.html",
                                 "/eleves.html",
@@ -47,7 +51,16 @@ public class SecurityConfig {
                                 "/favicon.ico"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/promotions/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/filieres/**", "/api/cursus/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/me/**").hasAnyAuthority(
+                                RoleUtilisateur.ROLE_ELEVE.name(),
+                                RoleUtilisateur.ROLE_ADMIN.name()
+                        )
+                        .requestMatchers(HttpMethod.GET, "/api/formateur/**").hasAnyAuthority(
+                                RoleUtilisateur.ROLE_FORMATEUR.name(),
+                                RoleUtilisateur.ROLE_ADMIN.name()
+                        )
                         .requestMatchers("/api/filieres/**", "/api/cursus/**", "/api/eleves/**").hasAnyAuthority(
                                 RoleUtilisateur.ROLE_REFERENTE.name(),
                                 RoleUtilisateur.ROLE_ADMIN.name()
