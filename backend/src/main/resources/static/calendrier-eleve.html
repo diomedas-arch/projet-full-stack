@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr" ng-app="servicePedagogiqueApp">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mon calendrier - Service pédagogique</title><link rel="stylesheet" href="/css/app.css"></head>
+<body ng-controller="CalendrierEleveController as vm" ng-cloak>
+<div class="app-shell" ng-class="{'menu-open': vm.nav.open}"><sp-navigation active="calendrier" nav="vm.nav"></sp-navigation><div class="app-main">
+    <header class="mobile-header"><button class="menu-button" type="button" ng-click="vm.nav.open = true">Menu</button><strong>Service pédagogique</strong></header>
+    <main class="page-content">
+        <header class="page-header"><div><p class="eyebrow">Espace élève</p><h1>Mon calendrier</h1><p class="page-description">Retrouvez vos cours, horaires, salles et promotions.</p></div><span class="readonly-badge">Espace en lecture seule</span></header>
+        <div class="alert alert-error" ng-if="vm.error">{{vm.error}}</div>
+        <section class="stats-grid student-stats">
+            <article class="stat-card"><span class="stat-label">Cours au calendrier</span><strong class="stat-value">{{vm.loading ? '…' : vm.cours.length}}</strong><span class="stat-note">Promotion et inscriptions à l’unité</span></article>
+            <article class="stat-card green"><span class="stat-label">Cours à venir</span><strong class="stat-value">{{vm.loading ? '…' : vm.aVenir.length}}</strong><span class="stat-note">À partir d’aujourd’hui</span></article>
+            <article class="stat-card amber"><span class="stat-label">Promotions suivies</span><strong class="stat-value">{{vm.loading ? '…' : vm.promotions}}</strong><span class="stat-note">Promotions présentes au calendrier</span></article>
+        </section>
+        <section class="card next-course" ng-if="vm.prochain"><div><span class="eyebrow">Prochain cours</span><h2>{{vm.prochain.titreCours}}</h2><p>{{vm.prochain.codeCours}} · {{vm.prochain.promotion}}</p></div><div class="next-course-time"><strong>{{vm.prochain.dateDebut | date:'dd/MM/yyyy'}}</strong><span>{{vm.prochain.dateDebut | date:'HH:mm'}} – {{vm.prochain.dateFin | date:'HH:mm'}} · {{vm.prochain.salle || 'Salle à confirmer'}}</span></div></section>
+        <section class="card">
+            <div class="card-header"><div><h2>Mes cours</h2><p>Les informations sont fournies par le service pédagogique.</p></div></div>
+            <div class="course-list">
+                <div class="state-cell" ng-if="vm.loading">Chargement du calendrier…</div>
+                <div class="empty-state" ng-if="!vm.loading && !vm.cours.length"><strong>Aucun cours à afficher</strong><span>Le compte doit être relié à un dossier élève et à une promotion ou un cours.</span></div>
+                <article class="course-row" ng-repeat="cours in vm.cours track by $index"><div class="course-date"><strong>{{cours.dateDebut | date:'dd'}}</strong><span>{{cours.dateDebut | date:'MMM'}}</span></div><div class="course-main"><div><span class="pill">{{cours.typeInscription === 'PROMOTION' ? 'Promotion' : 'À l’unité'}}</span><h3>{{cours.titreCours}}</h3><p>{{cours.codeCours}} · {{cours.promotion}}</p></div><div class="course-meta"><span>{{cours.dateDebut | date:'HH:mm'}} – {{cours.dateFin | date:'HH:mm'}}</span><span>{{cours.salle || 'Salle à confirmer'}}</span><span>{{cours.formateurSpecialite || 'Formateur à confirmer'}}</span></div></div></article>
+            </div>
+        </section>
+    </main>
+</div></div><sp-toasts></sp-toasts>
+<script src="/webjars/angular/1.8.3/angular.min.js"></script><script src="/js/angular/app.js"></script><script src="/js/angular/pages.js"></script>
+</body></html>

@@ -1,243 +1,41 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" ng-app="servicePedagogiqueApp">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#4f46e5">
     <title>Connexion - Service pédagogique</title>
-    <style>
-        :root {
-            color-scheme: light;
-            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            --bg: #eef2ff;
-            --card: #ffffff;
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --text: #111827;
-            --muted: #6b7280;
-            --border: #d1d5db;
-            --danger-bg: #fef2f2;
-            --danger-text: #991b1b;
-            --success-bg: #ecfdf5;
-            --success-text: #065f46;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            min-height: 100vh;
-            margin: 0;
-            display: grid;
-            place-items: center;
-            background:
-                    radial-gradient(circle at top left, rgba(79, 70, 229, 0.22), transparent 32rem),
-                    linear-gradient(135deg, #eef2ff 0%, #f8fafc 60%, #ecfeff 100%);
-            color: var(--text);
-        }
-
-        main {
-            width: min(94vw, 460px);
-        }
-
-        .card {
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.88);
-            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.16);
-            backdrop-filter: blur(10px);
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.45rem;
-            padding: 0.35rem 0.7rem;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: var(--primary-dark);
-            font-size: 0.82rem;
-            font-weight: 700;
-        }
-
-        h1 {
-            margin: 1.1rem 0 0.4rem;
-            font-size: clamp(1.8rem, 6vw, 2.5rem);
-            line-height: 1.05;
-        }
-
-        p {
-            margin: 0 0 1.6rem;
-            color: var(--muted);
-            line-height: 1.55;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.45rem;
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .field {
-            margin-bottom: 1rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            background: #fff;
-            color: var(--text);
-            font: inherit;
-            outline: none;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
-        }
-
-        button {
-            width: 100%;
-            margin-top: 0.4rem;
-            padding: 0.95rem 1rem;
-            border: 0;
-            border-radius: 14px;
-            background: var(--primary);
-            color: white;
-            font: inherit;
-            font-weight: 800;
-            cursor: pointer;
-            transition: transform 0.15s ease, background 0.15s ease;
-        }
-
-        button:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        button:disabled {
-            cursor: wait;
-            opacity: 0.72;
-            transform: none;
-        }
-
-        .message {
-            display: none;
-            margin-top: 1rem;
-            padding: 0.9rem 1rem;
-            border-radius: 14px;
-            line-height: 1.45;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-        }
-
-        .message.success {
-            display: block;
-            background: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .message.error {
-            display: block;
-            background: var(--danger-bg);
-            color: var(--danger-text);
-        }
-
-    </style>
+    <link rel="stylesheet" href="/css/app.css">
 </head>
-<body>
-<main>
-    <section class="card" aria-labelledby="titre-connexion">
+<body class="login-page" ng-controller="LoginController as vm" ng-cloak>
+<main class="login-container">
+    <section class="login-card" aria-labelledby="titre-connexion">
         <span class="badge">Service pédagogique</span>
         <h1 id="titre-connexion">Connexion</h1>
-        <p>Connectez-vous pour accéder à votre espace de gestion pédagogique.</p>
+        <p>Connectez-vous pour accéder à votre espace pédagogique.</p>
 
-        <form id="loginForm">
-            <div class="field">
-                <label for="email">Email</label>
+        <form name="loginForm" ng-submit="vm.submit(loginForm)" novalidate>
+            <div class="form-field">
+                <label for="email">Email <span class="required">*</span></label>
                 <input id="email" name="email" type="email" autocomplete="username" required
-                       placeholder="admin@example.com">
+                       ng-model="vm.credentials.email" placeholder="votre.email@exemple.fr">
+                <span class="field-error" ng-if="loginForm.$submitted && loginForm.email.$invalid">Saisissez un email valide.</span>
             </div>
-
-            <div class="field">
-                <label for="motDePasse">Mot de passe</label>
+            <div class="form-field">
+                <label for="motDePasse">Mot de passe <span class="required">*</span></label>
                 <input id="motDePasse" name="motDePasse" type="password" autocomplete="current-password" required
-                       placeholder="Votre mot de passe">
+                       ng-model="vm.credentials.motDePasse" placeholder="Votre mot de passe">
+                <span class="field-error" ng-if="loginForm.$submitted && loginForm.motDePasse.$invalid">Le mot de passe est obligatoire.</span>
             </div>
-
-            <button id="submitButton" type="submit">Se connecter</button>
+            <button class="button button-primary login-button" type="submit" ng-disabled="vm.loading">
+                {{vm.loading ? 'Connexion en cours…' : 'Se connecter'}}
+            </button>
         </form>
-
-        <div id="message" class="message" role="status"></div>
+        <div class="form-message error" ng-if="vm.message" role="alert">{{vm.message}}</div>
     </section>
 </main>
-
-<script type="module">
-    import { enregistrerSession, lireSession } from "/js/auth.js";
-
-    const form = document.querySelector("#loginForm");
-    const button = document.querySelector("#submitButton");
-    const message = document.querySelector("#message");
-
-    if (lireSession()) {
-        window.location.replace("/accueil.html");
-    }
-
-    if (new URLSearchParams(window.location.search).get("session") === "expiree") {
-        afficherMessage("error", "Votre session a expiré. Veuillez vous reconnecter.");
-        window.history.replaceState({}, "", "/login.html");
-    }
-
-    function afficherMessage(type, contenu) {
-        message.className = `message ${type}`;
-        message.textContent = contenu;
-    }
-
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const email = form.email.value.trim();
-        const motDePasse = form.motDePasse.value;
-
-        button.disabled = true;
-        button.textContent = "Connexion en cours...";
-        message.className = "message";
-        message.textContent = "";
-
-        try {
-            const response = await fetch("/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, motDePasse })
-            });
-
-            const data = await response.json().catch(() => ({}));
-
-            if (!response.ok) {
-                afficherMessage(
-                    "error",
-                    data.message || `Connexion refusée. Code HTTP : ${response.status}`
-                );
-                return;
-            }
-
-            enregistrerSession(data);
-            afficherMessage("success", "Connexion réussie. Redirection en cours…");
-            window.location.replace("/accueil.html");
-        } catch (error) {
-            afficherMessage("error", "Impossible de contacter le backend. Vérifie que Spring Boot est bien démarré.");
-        } finally {
-            button.disabled = false;
-            button.textContent = "Se connecter";
-        }
-    });
-</script>
+<script src="/webjars/angular/1.8.3/angular.min.js"></script>
+<script src="/js/angular/app.js"></script>
+<script src="/js/angular/pages.js"></script>
 </body>
 </html>

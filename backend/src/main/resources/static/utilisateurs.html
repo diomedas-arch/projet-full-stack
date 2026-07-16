@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr" ng-app="servicePedagogiqueApp">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Utilisateurs - Service pédagogique</title><link rel="stylesheet" href="/css/app.css"></head>
+<body ng-controller="UtilisateursController as vm" ng-cloak>
+<div class="app-shell" ng-class="{'menu-open': vm.nav.open}">
+    <sp-navigation active="utilisateurs" nav="vm.nav"></sp-navigation>
+    <div class="app-main">
+        <header class="mobile-header"><button class="menu-button" type="button" ng-click="vm.nav.open = true">Menu</button><strong>Service pédagogique</strong></header>
+        <main class="page-content">
+            <header class="page-header"><div><p class="eyebrow">Administration</p><h1>Gestion des utilisateurs</h1><p class="page-description">Créez les comptes, attribuez les rôles et gérez leur statut.</p></div><button class="button button-primary" type="button" ng-click="vm.reset()">Nouvel utilisateur</button></header>
+            <div class="alert alert-error" ng-if="vm.error">{{vm.error}}</div>
+            <div class="management-grid wide-list">
+                <section class="card">
+                    <div class="card-header"><div><h2>Comptes enregistrés</h2><p>{{vm.filtered().length}} utilisateur(s)</p></div><div class="toolbar"><input class="search-input" type="search" ng-model="vm.search" placeholder="Rechercher un email"><select class="filter-select" ng-model="vm.roleFilter"><option value="">Tous les rôles</option><option ng-repeat="role in vm.roles" value="{{role}}">{{role | roleLabel}}</option></select><select class="filter-select" ng-model="vm.statusFilter"><option value="">Tous les statuts</option><option ng-repeat="statut in vm.statuts" value="{{statut}}">{{statut | statusLabel}}</option></select></div></div>
+                    <div class="table-wrap"><table class="data-table"><thead><tr><th>Email</th><th>Rôle</th><th>Statut</th><th>Actions</th></tr></thead><tbody>
+                    <tr ng-if="vm.loading"><td colspan="4" class="state-cell">Chargement des utilisateurs…</td></tr>
+                    <tr ng-if="!vm.loading && !vm.filtered().length"><td colspan="4" class="state-cell">Aucun utilisateur ne correspond aux filtres.</td></tr>
+                    <tr ng-repeat="user in vm.filtered() track by user.idUtilisateur"><td class="table-primary">{{user.email}}</td><td>{{user.role | roleLabel}}</td><td><span class="status-pill" ng-class="user.statut.toLowerCase()">{{user.statut | statusLabel}}</span></td><td class="actions-cell"><button class="button button-secondary button-small" type="button" ng-click="vm.edit(user)">Modifier</button><button class="button button-ghost button-small" type="button" ng-click="vm.toggleStatus(user)">{{user.statut === 'ACTIF' ? 'Désactiver' : 'Activer'}}</button></td></tr>
+                    </tbody></table></div>
+                </section>
+                <aside class="card form-card" id="formulaire-utilisateur">
+                    <h2>{{vm.form.idUtilisateur ? 'Modifier le compte' : 'Créer un utilisateur'}}</h2><p>Un rôle détermine les pages et les données accessibles.</p>
+                    <div class="form-message error" ng-if="vm.formError">{{vm.formError}}</div>
+                    <form name="userForm" ng-submit="vm.save(userForm)" novalidate>
+                        <div class="form-field"><label for="user-email">Email <span class="required">*</span></label><input id="user-email" name="email" type="email" required ng-model="vm.form.email" placeholder="prenom.nom@exemple.fr"></div>
+                        <div class="form-field" ng-if="!vm.form.idUtilisateur"><label for="user-password">Mot de passe <span class="required">*</span></label><input id="user-password" name="password" type="password" minlength="8" required ng-model="vm.form.motDePasse" autocomplete="new-password"><span class="form-help">8 caractères minimum.</span></div>
+                        <div class="form-field"><label for="user-role">Rôle <span class="required">*</span></label><select id="user-role" name="role" required ng-model="vm.form.role"><option value="">Sélectionner un rôle</option><option ng-repeat="role in vm.roles" value="{{role}}">{{role | roleLabel}}</option></select></div>
+                        <div class="form-field"><label for="user-statut">Statut <span class="required">*</span></label><select id="user-statut" name="statut" required ng-model="vm.form.statut"><option ng-repeat="statut in vm.statuts" value="{{statut}}">{{statut | statusLabel}}</option></select></div>
+                        <div class="field-error" ng-if="userForm.$submitted && userForm.$invalid">Complétez correctement tous les champs obligatoires.</div>
+                        <div class="form-actions"><button class="button button-primary" type="submit" ng-disabled="vm.saving">{{vm.saving ? 'Enregistrement…' : 'Enregistrer'}}</button><button class="button button-secondary" type="button" ng-if="vm.form.idUtilisateur" ng-click="vm.reset()">Annuler</button></div>
+                    </form>
+                </aside>
+            </div>
+        </main>
+    </div>
+</div><sp-toasts></sp-toasts>
+<script src="/webjars/angular/1.8.3/angular.min.js"></script><script src="/js/angular/app.js"></script><script src="/js/angular/pages.js"></script>
+</body></html>

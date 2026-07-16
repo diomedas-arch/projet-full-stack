@@ -1,0 +1,24 @@
+<aside class="sidebar" aria-label="Navigation principale">
+    <a class="brand" ng-href="{{menu.items[0].href || '/accueil.html'}}">
+        <span class="brand-mark">SP</span>
+        <span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span>
+    </a>
+    <p class="nav-label">Navigation</p>
+    <nav class="main-nav">
+        <a class="nav-link" ng-repeat="item in menu.items track by item.key"
+           ng-class="{active: menu.active === item.key}" ng-href="{{item.href}}">
+            <span class="nav-icon">{{item.icon}}</span>{{item.label}}
+        </a>
+    </nav>
+    <div class="sidebar-footer" ng-if="menu.session">
+        <div class="user-card">
+            <span class="user-avatar">{{menu.session.utilisateur.email.charAt(0).toUpperCase()}}</span>
+            <span class="user-details">
+                <strong>{{menu.session.utilisateur.email}}</strong>
+                <span>{{menu.session.utilisateur.role | roleLabel}}</span>
+            </span>
+        </div>
+        <button class="logout-button" type="button" ng-click="menu.logout()">Se déconnecter</button>
+    </div>
+</aside>
+<button class="menu-backdrop" type="button" ng-click="menu.nav.open = false" aria-label="Fermer le menu"></button>

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="fr" ng-app="servicePedagogiqueApp">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Promotions - Service pédagogique</title><link rel="stylesheet" href="/css/app.css"></head>
+<body ng-controller="PromotionsController as vm" ng-cloak>
+<div class="app-shell" ng-class="{'menu-open': vm.nav.open}"><sp-navigation active="promotions" nav="vm.nav"></sp-navigation><div class="app-main">
+    <header class="mobile-header"><button class="menu-button" type="button" ng-click="vm.nav.open = true">Menu</button><strong>Service pédagogique</strong></header>
+    <main class="page-content">
+        <header class="page-header"><div><p class="eyebrow">Consultation</p><h1>Promotions</h1><p class="page-description">Consultez les promotions, leur cursus et leur période.</p></div><span class="readonly-badge">Consultation uniquement</span></header>
+        <div class="alert alert-error" ng-if="vm.error">{{vm.error}}</div>
+        <section class="card">
+            <div class="card-header"><div><h2>Promotions enregistrées</h2><p>{{vm.filtered().length}} promotion(s)</p></div><div class="toolbar"><input class="search-input" type="search" ng-model="vm.search" placeholder="Rechercher une promotion"><select class="filter-select" ng-model="vm.statusFilter"><option value="">Tous les statuts</option><option value="PLANIFIEE">Planifiée</option><option value="EN_COURS">En cours</option><option value="TERMINEE">Terminée</option><option value="ANNULEE">Annulée</option></select></div></div>
+            <div class="table-wrap"><table class="data-table"><thead><tr><th>Promotion</th><th>Filière</th><th>Cursus</th><th>Période</th><th>Statut</th></tr></thead><tbody>
+            <tr ng-if="vm.loading"><td colspan="5" class="state-cell">Chargement des promotions…</td></tr>
+            <tr ng-if="!vm.loading && !vm.filtered().length"><td colspan="5" class="state-cell">Aucune promotion ne correspond aux filtres.</td></tr>
+            <tr ng-repeat="promotion in vm.filtered() track by promotion.idPromotion"><td class="table-primary">{{promotion.libelle}}</td><td>{{promotion.libelleFiliere}}</td><td>{{promotion.titreCursus}}<span class="table-subtext">{{promotion.niveau || 'Niveau non renseigné'}}</span></td><td>{{promotion.periode}}</td><td><span class="status-pill" ng-class="promotion.statut.toLowerCase()">{{promotion.statut | statusLabel}}</span></td></tr>
+            </tbody></table></div>
+        </section>
+    </main>
+</div></div><sp-toasts></sp-toasts>
+<script src="/webjars/angular/1.8.3/angular.min.js"></script><script src="/js/angular/app.js"></script><script src="/js/angular/pages.js"></script>
+</body></html>

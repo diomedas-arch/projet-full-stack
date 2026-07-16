@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr" ng-app="servicePedagogiqueApp">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mes cours - Service pédagogique</title><link rel="stylesheet" href="/css/app.css"></head>
+<body ng-controller="CoursFormateurController as vm" ng-cloak>
+<div class="app-shell" ng-class="{'menu-open': vm.nav.open}"><sp-navigation active="cours-formateur" nav="vm.nav"></sp-navigation><div class="app-main">
+    <header class="mobile-header"><button class="menu-button" type="button" ng-click="vm.nav.open = true">Menu</button><strong>Service pédagogique</strong></header>
+    <main class="page-content">
+        <header class="page-header"><div><p class="eyebrow">Espace formateur</p><h1>Mes cours</h1><p class="page-description">Consultez vos interventions planifiées et les élèves concernés.</p></div><span class="readonly-badge">Espace en lecture seule</span></header>
+        <div class="alert alert-error" ng-if="vm.error">{{vm.error}}</div>
+        <section class="stats-grid student-stats"><article class="stat-card"><span class="stat-label">Cours affectés</span><strong class="stat-value">{{vm.loading ? '…' : vm.cours.length}}</strong><span class="stat-note">Toutes périodes confondues</span></article><article class="stat-card green"><span class="stat-label">Cours à venir</span><strong class="stat-value">{{vm.loading ? '…' : vm.aVenir}}</strong><span class="stat-note">Interventions restantes</span></article><article class="stat-card amber"><span class="stat-label">Élèves concernés</span><strong class="stat-value">{{vm.loading ? '…' : vm.nombreEleves}}</strong><span class="stat-note">Élèves uniques inscrits</span></article></section>
+        <section class="trainer-list">
+            <div class="card state-cell" ng-if="vm.loading">Chargement des cours…</div>
+            <div class="card empty-state" ng-if="!vm.loading && !vm.cours.length"><strong>Aucun cours affecté</strong><span>Le compte doit être relié à un formateur et à des cours planifiés.</span></div>
+            <article class="card trainer-course" ng-repeat="cours in vm.cours track by cours.idCoursPlanifie">
+                <div class="trainer-course-header"><div><span class="pill">{{cours.codeCours}}</span><h2>{{cours.titreCours}}</h2><p>{{cours.promotion}}</p></div><span class="status-pill" ng-class="cours.statut.toLowerCase()">{{cours.statut | statusLabel}}</span></div>
+                <div class="course-info-grid"><div><span>Date</span><strong>{{cours.dateDebut | date:'dd/MM/yyyy'}}</strong></div><div><span>Horaire</span><strong>{{cours.dateDebut | date:'HH:mm'}} – {{cours.dateFin | date:'HH:mm'}}</strong></div><div><span>Salle</span><strong>{{cours.salle || 'À confirmer'}}</strong></div><div><span>Élèves</span><strong>{{cours.eleves.length}}</strong></div></div>
+                <button class="students-toggle" type="button" ng-click="vm.toggle(cours)">{{cours.expanded ? 'Masquer les élèves' : 'Voir les élèves inscrits'}} <span>{{cours.expanded ? '↑' : '↓'}}</span></button>
+                <div class="students-panel" ng-if="cours.expanded"><div class="empty-state compact" ng-if="!cours.eleves.length"><span>Aucun élève inscrit à ce cours.</span></div><div class="table-wrap" ng-if="cours.eleves.length"><table class="data-table"><thead><tr><th>Email</th><th>Dossier</th><th>Téléphone</th><th>Inscription</th></tr></thead><tbody><tr ng-repeat="eleve in cours.eleves track by eleve.idEleve"><td class="table-primary">{{eleve.email}}</td><td>{{eleve.numeroDossier}}</td><td>{{eleve.telephone || 'Non renseigné'}}</td><td><span class="pill">{{eleve.typeInscription === 'PROMOTION' ? 'Promotion' : 'À l’unité'}}</span></td></tr></tbody></table></div></div>
+            </article>
+        </section>
+    </main>
+</div></div><sp-toasts></sp-toasts>
+<script src="/webjars/angular/1.8.3/angular.min.js"></script><script src="/js/angular/app.js"></script><script src="/js/angular/pages.js"></script>
+</body></html>

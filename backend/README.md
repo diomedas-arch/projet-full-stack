@@ -36,3 +36,30 @@ Requete HTTP
 ```
 
 La table SQL `UTILISATEUR` reste inchangee. Le code Java s'adapte a sa structure.
+
+## Interface Angular servie par Spring Boot
+
+Le projet reste une application Spring Boot unique. Il n'y a pas de projet frontend séparé.
+
+- Les pages se trouvent dans `src/main/resources/static`.
+- Les contrôleurs et services Angular se trouvent dans `src/main/resources/static/js/angular`.
+- AngularJS 1.8.3 est fourni par un WebJar Java et servi par Spring Boot sous `/webjars/**`.
+- Le navigateur appelle directement les routes REST `/api/**` du même serveur.
+- Le Tomcat intégré sert donc à la fois l'interface et le backend sur le port 8080.
+
+### Pages par rôle
+
+- `ROLE_ADMIN` : accueil, utilisateurs, filières, cursus et promotions.
+- `ROLE_REFERENTE` : accueil, filières, cursus et promotions.
+- `ROLE_ELEVE` : calendrier personnel et promotions, en lecture seule.
+- `ROLE_FORMATEUR` : cours affectés, élèves inscrits et promotions, en lecture seule.
+
+### Exécution
+
+Depuis le dossier `backend` :
+
+```powershell
+.\gradlew.bat bootRun
+```
+
+Puis ouvrir `http://localhost:8080`.

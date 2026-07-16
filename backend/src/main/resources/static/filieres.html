@@ -1,69 +1,58 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" ng-app="servicePedagogiqueApp">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#17203c">
     <title>Gestion des filières - Service pédagogique</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
-<body>
-<div class="app-shell">
-    <aside class="sidebar" aria-label="Navigation principale">
-        <a class="brand" href="/accueil.html"><span class="brand-mark">SP</span><span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span></a>
-        <p class="nav-label">Navigation</p>
-        <nav class="main-nav">
-            <a class="nav-link" data-nav="accueil" href="/accueil.html"><span class="nav-icon">A</span>Accueil</a>
-            <a class="nav-link" data-nav="filieres" href="/filieres.html"><span class="nav-icon">F</span>Filières</a>
-            <a class="nav-link" data-nav="cursus" href="/cursus.html"><span class="nav-icon">C</span>Cursus</a>
-        </nav>
-        <div class="sidebar-footer">
-            <div class="user-card"><span class="user-avatar" data-user-initial>U</span><span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span></div>
-            <button class="logout-button" type="button" data-logout>Se déconnecter</button>
-        </div>
-    </aside>
-    <div class="menu-backdrop" data-menu-backdrop></div>
-
+<body ng-controller="FilieresController as vm" ng-cloak>
+<div class="app-shell" ng-class="{'menu-open': vm.nav.open}">
+    <sp-navigation active="filieres" nav="vm.nav"></sp-navigation>
     <div class="app-main">
-        <header class="mobile-header"><button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button><strong>Service pédagogique</strong></header>
+        <header class="mobile-header"><button class="menu-button" type="button" ng-click="vm.nav.open = true">Menu</button><strong>Service pédagogique</strong></header>
         <main class="page-content">
             <header class="page-header">
-                <div>
-                    <p class="eyebrow">Référentiel pédagogique</p>
-                    <h1>Gestion des filières</h1>
-                    <p class="page-description">Créez les grands domaines de formation et consultez les cursus rattachés à chacun.</p>
-                </div>
-                <button class="button button-primary" type="button" data-new-filiere>Nouvelle filière</button>
+                <div><p class="eyebrow">Référentiel pédagogique</p><h1>Gestion des filières</h1><p class="page-description">Créez les domaines de formation et consultez leurs cursus.</p></div>
+                <button class="button button-primary" type="button" ng-click="vm.reset(true)">Nouvelle filière</button>
             </header>
+            <div class="alert alert-error" ng-if="vm.error">{{vm.error}}</div>
 
             <div class="management-grid">
                 <section class="card" aria-labelledby="liste-filieres-title">
                     <div class="card-header">
-                        <div><h2 id="liste-filieres-title">Filières enregistrées</h2><p><span data-filiere-count>0</span> filière(s)</p></div>
-                        <div class="toolbar"><input class="search-input" data-filiere-search type="search" placeholder="Rechercher une filière" aria-label="Rechercher une filière"></div>
+                        <div><h2 id="liste-filieres-title">Filières enregistrées</h2><p>{{vm.filtered().length}} filière(s)</p></div>
+                        <div class="toolbar"><input class="search-input" type="search" ng-model="vm.search" placeholder="Rechercher une filière" aria-label="Rechercher une filière"></div>
                     </div>
                     <div class="table-wrap">
                         <table class="data-table">
                             <thead><tr><th>Libellé</th><th>Cursus rattachés</th><th>Action</th></tr></thead>
-                            <tbody data-filiere-list><tr><td colspan="3" class="state-cell">Chargement des filières…</td></tr></tbody>
+                            <tbody>
+                            <tr ng-if="vm.loading"><td colspan="3" class="state-cell">Chargement des filières…</td></tr>
+                            <tr ng-if="!vm.loading && !vm.filtered().length"><td colspan="3" class="state-cell">Aucune filière ne correspond à la recherche.</td></tr>
+                            <tr ng-repeat="filiere in vm.filtered() track by filiere.idFiliere">
+                                <td class="table-primary">{{filiere.libelle}}</td><td>{{filiere.nombreCursus}} cursus</td>
+                                <td class="actions-cell"><button class="button button-secondary button-small" type="button" ng-click="vm.edit(filiere)">Modifier</button></td>
+                            </tr>
+                            </tbody>
                         </table>
                     </div>
                 </section>
 
                 <aside class="card form-card" id="formulaire-filiere" aria-labelledby="filiere-form-title">
-                    <h2 id="filiere-form-title">Ajouter une filière</h2>
-                    <p data-filiere-form-description>Une filière regroupe plusieurs cursus d’un même domaine.</p>
-                    <div class="form-message" data-filiere-message role="alert"></div>
-                    <form data-filiere-form novalidate>
-                        <input data-filiere-id type="hidden">
+                    <h2 id="filiere-form-title">{{vm.form.idFiliere ? 'Modifier la filière' : 'Ajouter une filière'}}</h2>
+                    <p>{{vm.form.idFiliere ? 'Le nouveau libellé sera visible sur les cursus associés.' : 'Une filière regroupe plusieurs cursus d’un même domaine.'}}</p>
+                    <div class="form-message error" ng-if="vm.formError" role="alert">{{vm.formError}}</div>
+                    <form name="filiereForm" ng-submit="vm.save(filiereForm)" novalidate>
                         <div class="form-field">
                             <label for="libelle">Libellé <span class="required">*</span></label>
-                            <input id="libelle" data-filiere-libelle type="text" maxlength="100" required placeholder="Ex. Développement">
+                            <input id="libelle" name="libelle" type="text" maxlength="100" required ng-model="vm.form.libelle" placeholder="Ex. Développement">
+                            <span class="field-error" ng-if="filiereForm.$submitted && filiereForm.libelle.$invalid">Le libellé est obligatoire.</span>
                             <span class="form-help">Le nom doit être unique.</span>
                         </div>
                         <div class="form-actions">
-                            <button class="button button-primary" data-filiere-submit type="submit">Enregistrer</button>
-                            <button class="button button-secondary" data-filiere-cancel type="button" hidden>Annuler</button>
+                            <button class="button button-primary" type="submit" ng-disabled="vm.saving">{{vm.saving ? 'Enregistrement…' : 'Enregistrer'}}</button>
+                            <button class="button button-secondary" type="button" ng-if="vm.form.idFiliere" ng-click="vm.reset()">Annuler</button>
                         </div>
                     </form>
                 </aside>
@@ -71,6 +60,7 @@
         </main>
     </div>
 </div>
-<script type="module" src="/js/filieres.js"></script>
+<sp-toasts></sp-toasts>
+<script src="/webjars/angular/1.8.3/angular.min.js"></script><script src="/js/angular/app.js"></script><script src="/js/angular/pages.js"></script>
 </body>
 </html>

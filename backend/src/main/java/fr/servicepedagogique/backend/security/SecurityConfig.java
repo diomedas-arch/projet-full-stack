@@ -38,11 +38,20 @@ public class SecurityConfig {
                                 "/accueil.html",
                                 "/filieres.html",
                                 "/cursus.html",
+                                "/utilisateurs.html",
+                                "/promotions.html",
+                                "/calendrier-eleve.html",
+                                "/cours-formateur.html",
                                 "/css/**",
                                 "/js/**",
+                                "/fragments/**",
+                                "/webjars/**",
                                 "/favicon.ico"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers("/api/me/calendrier").hasAuthority(RoleUtilisateur.ROLE_ELEVE.name())
+                        .requestMatchers("/api/formateur/**").hasAuthority(RoleUtilisateur.ROLE_FORMATEUR.name())
+                        .requestMatchers(HttpMethod.GET, "/api/promotions/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/filieres/**", "/api/cursus/**").authenticated()
                         .requestMatchers("/api/filieres/**", "/api/cursus/**").hasAnyAuthority(
                                 RoleUtilisateur.ROLE_REFERENTE.name(),
