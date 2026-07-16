@@ -50,6 +50,8 @@ public class SecurityConfig {
                         )
                         .requestMatchers("/api/utilisateurs/**").hasAuthority(RoleUtilisateur.ROLE_ADMIN.name())
                         .requestMatchers("/api/cours/**").hasAuthority(RoleUtilisateur.ROLE_REFERENTE.name())
+                        .requestMatchers("/api/promotions/**").hasAuthority(RoleUtilisateur.ROLE_REFERENTE.name())
+                        .requestMatchers("/api/cours-planifies/**").hasAuthority(RoleUtilisateur.ROLE_REFERENTE.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
