@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17203c">
+    <title>Gestion des cursus - Service pédagogique</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Navigation principale">
+        <a class="brand" href="/accueil.html"><span class="brand-mark">SP</span><span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span></a>
+        <p class="nav-label">Navigation</p>
+        <nav class="main-nav">
+            <a class="nav-link" data-nav="accueil" href="/accueil.html"><span class="nav-icon">A</span>Accueil</a>
+            <a class="nav-link" data-nav="filieres" href="/filieres.html"><span class="nav-icon">F</span>Filières</a>
+            <a class="nav-link" data-nav="cursus" href="/cursus.html"><span class="nav-icon">C</span>Cursus</a>
+            <a class="nav-link" data-nav="eleves" data-gestion-only href="/eleves.html"><span class="nav-icon">E</span>Élèves</a>
+            <a class="nav-link" data-nav="utilisateurs" data-admin-only href="/utilisateurs.html"><span class="nav-icon">U</span>Utilisateurs</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-card"><span class="user-avatar" data-user-initial>U</span><span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span></div>
+            <button class="logout-button" type="button" data-logout>Se déconnecter</button>
+        </div>
+    </aside>
+    <div class="menu-backdrop" data-menu-backdrop></div>
+
+    <div class="app-main">
+        <header class="mobile-header"><button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button><strong>Service pédagogique</strong></header>
+        <main class="page-content">
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">Organisation des parcours</p>
+                    <h1>Gestion des cursus</h1>
+                    <p class="page-description">Créez un parcours pédagogique, rattachez-le à une filière et précisez son niveau.</p>
+                </div>
+                <button class="button button-primary" type="button" data-new-cursus>Nouveau cursus</button>
+            </header>
+
+            <div class="management-grid">
+                <section class="card" aria-labelledby="liste-cursus-title">
+                    <div class="card-header">
+                        <div><h2 id="liste-cursus-title">Cursus enregistrés</h2><p><span data-cursus-count>0</span> cursus</p></div>
+                        <div class="toolbar">
+                            <input class="search-input" data-cursus-search type="search" placeholder="Rechercher un cursus" aria-label="Rechercher un cursus">
+                            <select class="filter-select" data-cursus-filter aria-label="Filtrer par filière"><option value="">Toutes les filières</option></select>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th>Cursus</th><th>Filière</th><th>Niveau</th><th>Action</th></tr></thead>
+                            <tbody data-cursus-list><tr><td colspan="4" class="state-cell">Chargement des cursus…</td></tr></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <aside class="card form-card" id="formulaire-cursus" aria-labelledby="cursus-form-title">
+                    <h2 id="cursus-form-title">Ajouter un cursus</h2>
+                    <p data-cursus-form-description>Le cursus doit obligatoirement appartenir à une filière.</p>
+                    <div class="form-message" data-cursus-message role="alert"></div>
+                    <form data-cursus-form novalidate>
+                        <input data-cursus-id type="hidden">
+                        <div class="form-field">
+                            <label for="filiere">Filière <span class="required">*</span></label>
+                            <select id="filiere" data-cursus-filiere required><option value="">Sélectionner une filière</option></select>
+                        </div>
+                        <div class="form-field">
+                            <label for="titre">Titre <span class="required">*</span></label>
+                            <input id="titre" data-cursus-titre type="text" maxlength="150" required placeholder="Ex. Concepteur développeur d’applications">
+                        </div>
+                        <div class="form-field">
+                            <label for="niveau">Niveau</label>
+                            <input id="niveau" data-cursus-niveau type="text" maxlength="50" placeholder="Ex. Niveau 6">
+                            <span class="form-help">Champ facultatif, 50 caractères maximum.</span>
+                        </div>
+                        <div class="form-actions">
+                            <button class="button button-primary" data-cursus-submit type="submit">Enregistrer</button>
+                            <button class="button button-secondary" data-cursus-cancel type="button" hidden>Annuler</button>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </main>
+    </div>
+</div>
+<script type="module" src="/js/cursus.js"></script>
+</body>
+</html>

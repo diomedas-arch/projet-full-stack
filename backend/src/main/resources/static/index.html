@@ -2,10 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0; url=/login.html">
     <title>Redirection</title>
 </head>
 <body>
-<p>Redirection vers <a href="/login.html">la page de connexion</a>.</p>
+<p>Chargement de l’application…</p>
+<script>
+    window.location.replace(localStorage.getItem("token") ? "/accueil.html" : "/login.html");
+</script>
 </body>
 </html>

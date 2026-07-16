@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +29,25 @@ public class GestionErreurControllerAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError emailDejaUtilise(EmailDejaUtiliseException exception, HttpServletRequest request) {
         return ApiError.simple(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(DonneeDejaExistanteException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError donneeDejaExistante(
+            DonneeDejaExistanteException exception,
+            HttpServletRequest request
+    ) {
+        return ApiError.simple(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError contrainteBaseDeDonnees(HttpServletRequest request) {
+        return ApiError.simple(
+                HttpStatus.CONFLICT,
+                "Suppression impossible : cette donnée est encore utilisée ailleurs.",
+                request
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17203c">
+    <title>Formulaire utilisateur - Service pédagogique</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Navigation principale">
+        <a class="brand" href="/accueil.html"><span class="brand-mark">SP</span><span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span></a>
+        <p class="nav-label">Navigation</p>
+        <nav class="main-nav">
+            <a class="nav-link" data-nav="accueil" href="/accueil.html"><span class="nav-icon">A</span>Accueil</a>
+            <a class="nav-link" data-nav="filieres" href="/filieres.html"><span class="nav-icon">F</span>Filières</a>
+            <a class="nav-link" data-nav="cursus" href="/cursus.html"><span class="nav-icon">C</span>Cursus</a>
+            <a class="nav-link" data-nav="eleves" data-gestion-only href="/eleves.html"><span class="nav-icon">E</span>Élèves</a>
+            <a class="nav-link" data-nav="utilisateurs" data-admin-only href="/utilisateurs.html"><span class="nav-icon">U</span>Utilisateurs</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-card"><span class="user-avatar" data-user-initial>U</span><span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span></div>
+            <button class="logout-button" type="button" data-logout>Se déconnecter</button>
+        </div>
+    </aside>
+    <div class="menu-backdrop" data-menu-backdrop></div>
+
+    <div class="app-main">
+        <header class="mobile-header"><button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button><strong>Service pédagogique</strong></header>
+        <main class="page-content">
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">Administration</p>
+                    <h1 data-page-title>Nouvel utilisateur</h1>
+                    <p class="page-description" data-page-description>Créez un compte et attribuez-lui un rôle dans l’application.</p>
+                </div>
+                <a class="button button-secondary" href="/utilisateurs.html">Retour à la liste</a>
+            </header>
+
+            <section class="card form-page-card" aria-labelledby="utilisateur-form-title">
+                <div class="card-header">
+                    <div>
+                        <h2 id="utilisateur-form-title" data-form-title>Ajouter un utilisateur</h2>
+                        <p data-utilisateur-form-description>Le mot de passe sera automatiquement hashé avant d’être stocké.</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-message" data-utilisateur-message role="alert"></div>
+                    <form data-utilisateur-form novalidate>
+                        <input data-utilisateur-id type="hidden">
+                        <div class="form-field">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input id="email" data-utilisateur-email type="email" maxlength="255" required placeholder="prenom.nom@email.com">
+                        </div>
+                        <div class="form-field">
+                            <label for="motDePasse">Mot de passe <span data-password-required class="required">*</span></label>
+                            <input id="motDePasse" data-utilisateur-password type="password" minlength="8" maxlength="100" required placeholder="8 caractères minimum">
+                            <span class="form-help" data-password-help>Obligatoire à la création du compte.</span>
+                        </div>
+                        <div class="form-field">
+                            <label for="role">Rôle <span class="required">*</span></label>
+                            <select id="role" data-utilisateur-role required></select>
+                        </div>
+                        <div class="form-field">
+                            <label for="statut">Statut</label>
+                            <select id="statut" data-utilisateur-statut></select>
+                        </div>
+                        <div class="form-actions">
+                            <button class="button button-primary" data-utilisateur-submit type="submit">Enregistrer</button>
+                            <a class="button button-secondary" href="/utilisateurs.html">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+<script type="module" src="/js/utilisateur-form.js"></script>
+</body>
+</html>

@@ -8,7 +8,6 @@
         :root {
             color-scheme: light;
             font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            --bg: #eef2ff;
             --card: #ffffff;
             --primary: #4f46e5;
             --primary-dark: #3730a3;
@@ -44,7 +43,7 @@
             padding: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: 24px;
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.9);
             box-shadow: 0 24px 80px rgba(15, 23, 42, 0.16);
             backdrop-filter: blur(10px);
         }
@@ -52,7 +51,6 @@
         .badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
             padding: 0.35rem 0.7rem;
             border-radius: 999px;
             background: #eef2ff;
@@ -147,21 +145,6 @@
             background: var(--danger-bg);
             color: var(--danger-text);
         }
-
-        .token {
-            margin-top: 0.8rem;
-            padding: 0.8rem;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.7);
-            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-            font-size: 0.78rem;
-        }
-
-        .hint {
-            margin-top: 1rem;
-            font-size: 0.86rem;
-            color: var(--muted);
-        }
     </style>
 </head>
 <body>
@@ -169,7 +152,7 @@
     <section class="card" aria-labelledby="titre-connexion">
         <span class="badge">Service pédagogique</span>
         <h1 id="titre-connexion">Connexion</h1>
-        <p>Cette page sert à tester rapidement l’authentification JWT du backend.</p>
+        <p>Connectez-vous pour accéder à votre espace de gestion pédagogique.</p>
 
         <form id="loginForm">
             <div class="field">
@@ -184,33 +167,32 @@
                        placeholder="Votre mot de passe">
             </div>
 
-            <button id="submitButton" type="submit">Tester la connexion</button>
+            <button id="submitButton" type="submit">Se connecter</button>
         </form>
 
         <div id="message" class="message" role="status"></div>
-
-        <p class="hint">
-            La page appelle <code>POST /api/auth/login</code>. Il faut donc qu’un utilisateur existe déjà dans la table
-            <code>UTILISATEUR</code> avec un mot de passe hashé BCrypt.
-        </p>
     </section>
 </main>
 
-<script>
+<script type="module">
+    import { enregistrerSession, lireSession } from "/js/auth.js";
+
     const form = document.querySelector("#loginForm");
     const button = document.querySelector("#submitButton");
     const message = document.querySelector("#message");
 
-    function afficherMessage(type, contenu, token) {
+    if (lireSession()) {
+        window.location.replace("/accueil.html");
+    }
+
+    if (new URLSearchParams(window.location.search).get("session") === "expiree") {
+        afficherMessage("error", "Votre session a expiré. Veuillez vous reconnecter.");
+        window.history.replaceState({}, "", "/login.html");
+    }
+
+    function afficherMessage(type, contenu) {
         message.className = `message ${type}`;
         message.textContent = contenu;
-
-        if (token) {
-            const tokenBlock = document.createElement("div");
-            tokenBlock.className = "token";
-            tokenBlock.textContent = token;
-            message.appendChild(tokenBlock);
-        }
     }
 
     form.addEventListener("submit", async (event) => {
@@ -243,17 +225,14 @@
                 return;
             }
 
-            localStorage.setItem("token", data.token);
-            afficherMessage(
-                "success",
-                `Connexion réussie.\nUtilisateur : ${data.utilisateur.email}\nRôle : ${data.utilisateur.role}\nToken enregistré dans localStorage.`,
-                data.token
-            );
+            enregistrerSession(data);
+            afficherMessage("success", "Connexion réussie. Redirection en cours…");
+            window.location.replace("/accueil.html");
         } catch (error) {
             afficherMessage("error", "Impossible de contacter le backend. Vérifie que Spring Boot est bien démarré.");
         } finally {
             button.disabled = false;
-            button.textContent = "Tester la connexion";
+            button.textContent = "Se connecter";
         }
     });
 </script>

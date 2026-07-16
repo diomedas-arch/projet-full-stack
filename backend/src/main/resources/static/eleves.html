@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17203c">
+    <title>Gestion des élèves - Service pédagogique</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Navigation principale">
+        <a class="brand" href="/accueil.html"><span class="brand-mark">SP</span><span class="brand-copy"><strong>Service pédagogique</strong><span>Gestion des formations</span></span></a>
+        <p class="nav-label">Navigation</p>
+        <nav class="main-nav">
+            <a class="nav-link" data-nav="accueil" href="/accueil.html"><span class="nav-icon">A</span>Accueil</a>
+            <a class="nav-link" data-nav="filieres" href="/filieres.html"><span class="nav-icon">F</span>Filières</a>
+            <a class="nav-link" data-nav="cursus" href="/cursus.html"><span class="nav-icon">C</span>Cursus</a>
+            <a class="nav-link" data-nav="eleves" data-gestion-only href="/eleves.html"><span class="nav-icon">E</span>Élèves</a>
+            <a class="nav-link" data-nav="utilisateurs" data-admin-only href="/utilisateurs.html"><span class="nav-icon">U</span>Utilisateurs</a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-card"><span class="user-avatar" data-user-initial>U</span><span class="user-details"><strong data-user-email>Utilisateur</strong><span data-user-role>Rôle</span></span></div>
+            <button class="logout-button" type="button" data-logout>Se déconnecter</button>
+        </div>
+    </aside>
+    <div class="menu-backdrop" data-menu-backdrop></div>
+
+    <div class="app-main">
+        <header class="mobile-header"><button class="menu-button" type="button" data-menu-toggle aria-label="Ouvrir le menu">Menu</button><strong>Service pédagogique</strong></header>
+        <main class="page-content">
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">Gestion pédagogique</p>
+                    <h1>Gestion des élèves</h1>
+                    <p class="page-description">Chaque élève est lié à un compte utilisateur avec le rôle élève.</p>
+                </div>
+                <a class="button button-primary" href="/eleve-form.html">Nouvel élève</a>
+            </header>
+
+            <section class="card" aria-labelledby="liste-eleves-title">
+                <div class="card-header">
+                    <div>
+                        <h2 id="liste-eleves-title">Élèves enregistrés</h2>
+                        <p><span data-eleve-count>0</span> élève(s)</p>
+                    </div>
+                    <div class="toolbar">
+                        <input class="search-input" data-eleve-search type="search" placeholder="Rechercher un élève" aria-label="Rechercher un élève">
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead><tr><th>Dossier</th><th>Email utilisateur</th><th>Téléphone</th><th>Statut</th><th>Actions</th></tr></thead>
+                        <tbody data-eleve-list><tr><td colspan="5" class="state-cell">Chargement des élèves…</td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+<script type="module" src="/js/eleves.js"></script>
+</body>
+</html>
