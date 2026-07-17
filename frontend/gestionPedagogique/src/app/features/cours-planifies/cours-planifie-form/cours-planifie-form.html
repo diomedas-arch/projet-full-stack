@@ -12,13 +12,19 @@
   @if (erreurGenerale()) {
     <div class="bandeau-erreur">{{ erreurGenerale() }}</div>
   }
+  @if (chargementErreur()) {
+    <div class="bandeau-erreur">{{ chargementErreur() }}</div>
+  }
+  @if (promotionsErreur()) {
+    <div class="bandeau-erreur">{{ promotionsErreur() }}</div>
+  }
 
   <div class="form-champs">
     <mat-form-field appearance="outline">
       <mat-label>Promotion</mat-label>
       <mat-select formControlName="idPromotion">
-        @for (promotion of promotions(); track promotion.id) {
-          <mat-option [value]="promotion.id">{{ promotion.libelle }}</mat-option>
+        @for (promotion of promotions(); track promotion.idPromotion) {
+          <mat-option [value]="promotion.idPromotion">{{ promotion.libelle }}</mat-option>
         }
       </mat-select>
       @if (form.controls.idPromotion.hasError('required') && form.controls.idPromotion.touched) {
@@ -51,24 +57,44 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Date et heure de début</mat-label>
-      <input matInput type="datetime-local" formControlName="dateDebut" />
-      @if (form.controls.dateDebut.hasError('required') && form.controls.dateDebut.touched) {
-        <mat-error>La date de début est obligatoire.</mat-error>
-      }
-    </mat-form-field>
+    <div class="champ-double">
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <input matInput type="date" formControlName="dateDebutDate" />
+        @if (form.controls.dateDebutDate.hasError('required') && form.controls.dateDebutDate.touched) {
+          <mat-error>La date de début est obligatoire.</mat-error>
+        }
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Date et heure de fin</mat-label>
-      <input matInput type="datetime-local" formControlName="dateFin" />
-      @if (form.controls.dateFin.hasError('required') && form.controls.dateFin.touched) {
-        <mat-error>La date de fin est obligatoire.</mat-error>
-      }
-      @if (dateFinErreurBackend()) {
-        <mat-error>{{ dateFinErreurBackend() }}</mat-error>
-      }
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Heure de début</mat-label>
+        <input matInput type="time" formControlName="dateDebutHeure" />
+        @if (form.controls.dateDebutHeure.hasError('required') && form.controls.dateDebutHeure.touched) {
+          <mat-error>L'heure de début est obligatoire.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="champ-double">
+      <mat-form-field appearance="outline">
+        <mat-label>Date de fin</mat-label>
+        <input matInput type="date" formControlName="dateFinDate" />
+        @if (form.controls.dateFinDate.hasError('required') && form.controls.dateFinDate.touched) {
+          <mat-error>La date de fin est obligatoire.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Heure de fin</mat-label>
+        <input matInput type="time" formControlName="dateFinHeure" />
+        @if (form.controls.dateFinHeure.hasError('required') && form.controls.dateFinHeure.touched) {
+          <mat-error>L'heure de fin est obligatoire.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    @if (dateFinErreurBackend()) {
+      <div class="bandeau-erreur">{{ dateFinErreurBackend() }}</div>
+    }
 
     <mat-form-field appearance="outline">
       <mat-label>Salle</mat-label>

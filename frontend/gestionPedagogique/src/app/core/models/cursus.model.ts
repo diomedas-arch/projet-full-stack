@@ -1,5 +1,5 @@
 export interface Cursus {
-  id: number;
+  idCursus: number;
   titre: string;
   niveau: string;
   idFiliere: number;

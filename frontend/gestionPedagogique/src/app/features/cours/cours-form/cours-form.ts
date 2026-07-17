@@ -35,6 +35,7 @@ export class CoursForm {
   protected readonly modeEdition = computed(() => !!this.id());
   protected readonly enregistrementEnCours = signal(false);
   protected readonly codeErreurBackend = signal<string | null>(null);
+  protected readonly chargementErreur = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
     code: ['', Validators.required],
@@ -45,8 +46,13 @@ export class CoursForm {
     effect(() => {
       const idValeur = this.id();
       if (idValeur) {
-        this.coursService.consulter(Number(idValeur)).subscribe((cours) => {
-          this.form.patchValue(cours);
+        this.chargementErreur.set(null);
+        this.coursService.consulter(Number(idValeur)).subscribe({
+          next: (cours) => this.form.patchValue(cours),
+          error: (erreur: ApiError) =>
+            this.chargementErreur.set(
+              `Impossible de charger ce cours : ${erreur.message}`
+            )
         });
       }
     });

@@ -1,6 +1,10 @@
 <form class="form-page" [formGroup]="form" (ngSubmit)="enregistrer()">
   <h1>{{ modeEdition() ? 'Modifier le cours' : 'Nouveau cours' }}</h1>
 
+  @if (chargementErreur()) {
+    <div class="bandeau-erreur">{{ chargementErreur() }}</div>
+  }
+
   <div class="form-champs">
     <mat-form-field appearance="outline">
       <mat-label>Code</mat-label>

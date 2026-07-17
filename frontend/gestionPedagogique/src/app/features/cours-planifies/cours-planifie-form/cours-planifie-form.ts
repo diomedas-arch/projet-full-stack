@@ -1,6 +1,7 @@
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Component, OnInit, computed, effect, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { merge } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -50,6 +51,8 @@ export class CoursPlanifieForm implements OnInit {
   protected readonly erreurGenerale = signal<string | null>(null);
   protected readonly dateFinErreurBackend = signal<string | null>(null);
   protected readonly coursErreurBackend = signal<string | null>(null);
+  protected readonly chargementErreur = signal<string | null>(null);
+  protected readonly promotionsErreur = signal<string | null>(null);
 
   protected readonly promotions = signal<Promotion[]>([]);
   protected readonly cursusCoursTemporaire = CURSUS_COURS_TEMPORAIRE;
@@ -62,12 +65,17 @@ export class CoursPlanifieForm implements OnInit {
     { valeur: 'ANNULE', label: 'Annulé' }
   ];
 
+  // Deux champs natifs séparés (date + heure) plutôt qu'un seul <input type="datetime-local">,
+  // qui posait un souci d'interaction (segment heure non saisissable) une fois emboîté dans
+  // mat-form-field. Chaque input mono-segment est plus fiable.
   protected readonly form = this.fb.nonNullable.group({
     idPromotion: [null as number | null, Validators.required],
     idCursusCours: [null as number | null, Validators.required],
     idFormateur: [null as number | null],
-    dateDebut: ['', Validators.required],
-    dateFin: ['', Validators.required],
+    dateDebutDate: ['', Validators.required],
+    dateDebutHeure: ['', Validators.required],
+    dateFinDate: ['', Validators.required],
+    dateFinHeure: ['', Validators.required],
     salle: [''],
     statut: ['PLANIFIE', Validators.required]
   });
@@ -77,7 +85,7 @@ export class CoursPlanifieForm implements OnInit {
   });
 
   protected readonly cursusCoursDisponibles = computed(() => {
-    const promotion = this.promotions().find((p) => p.id === this.idPromotionSignal());
+    const promotion = this.promotions().find((p) => p.idPromotion === this.idPromotionSignal());
     if (!promotion) {
       return [];
     }
@@ -90,16 +98,27 @@ export class CoursPlanifieForm implements OnInit {
       const idValeur = this.id();
       if (idValeur) {
         this.ignorerProchainResetCursusCours = true;
-        this.coursPlanifieService.consulter(Number(idValeur)).subscribe((coursPlanifie) => {
-          this.form.patchValue({
-            idPromotion: coursPlanifie.idPromotion,
-            idCursusCours: coursPlanifie.idCursusCours,
-            idFormateur: coursPlanifie.idFormateur,
-            dateDebut: versDatetimeLocal(coursPlanifie.dateDebut),
-            dateFin: versDatetimeLocal(coursPlanifie.dateFin),
-            salle: coursPlanifie.salle,
-            statut: coursPlanifie.statut
-          });
+        this.chargementErreur.set(null);
+        this.coursPlanifieService.consulter(Number(idValeur)).subscribe({
+          next: (coursPlanifie) => {
+            const [dateDebutDate, dateDebutHeure] = separerDateEtHeure(coursPlanifie.dateDebut);
+            const [dateFinDate, dateFinHeure] = separerDateEtHeure(coursPlanifie.dateFin);
+            this.form.patchValue({
+              idPromotion: coursPlanifie.idPromotion,
+              idCursusCours: coursPlanifie.idCursusCours,
+              idFormateur: coursPlanifie.idFormateur,
+              dateDebutDate,
+              dateDebutHeure,
+              dateFinDate,
+              dateFinHeure,
+              salle: coursPlanifie.salle,
+              statut: coursPlanifie.statut
+            });
+          },
+          error: (erreur: ApiError) =>
+            this.chargementErreur.set(
+              `Impossible de charger ce cours planifié : ${erreur.message}`
+            )
         });
       }
     });
@@ -112,7 +131,7 @@ export class CoursPlanifieForm implements OnInit {
       this.form.controls.idCursusCours.setValue(null);
     });
 
-    this.form.controls.dateFin.valueChanges
+    merge(this.form.controls.dateFinDate.valueChanges, this.form.controls.dateFinHeure.valueChanges)
       .pipe(takeUntilDestroyed())
       .subscribe(() => this.dateFinErreurBackend.set(null));
 
@@ -122,7 +141,11 @@ export class CoursPlanifieForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.promotionService.lister().subscribe((data) => this.promotions.set(data));
+    this.promotionService.lister().subscribe({
+      next: (data) => this.promotions.set(data),
+      error: (erreur: ApiError) =>
+        this.promotionsErreur.set(`Impossible de charger les promotions : ${erreur.message}`)
+    });
   }
 
   protected enregistrer(): void {
@@ -141,8 +164,8 @@ export class CoursPlanifieForm implements OnInit {
       idPromotion: valeur.idPromotion as number,
       idCursusCours: valeur.idCursusCours as number,
       idFormateur: valeur.idFormateur,
-      dateDebut: valeur.dateDebut,
-      dateFin: valeur.dateFin,
+      dateDebut: `${valeur.dateDebutDate}T${valeur.dateDebutHeure}`,
+      dateFin: `${valeur.dateFinDate}T${valeur.dateFinHeure}`,
       salle: valeur.salle || null,
       statut: valeur.statut
     };
@@ -192,6 +215,7 @@ export class CoursPlanifieForm implements OnInit {
   }
 }
 
-function versDatetimeLocal(valeur: string): string {
-  return valeur.slice(0, 16);
+function separerDateEtHeure(valeur: string): [string, string] {
+  const [date, heure] = valeur.slice(0, 16).split('T');
+  return [date, heure];
 }

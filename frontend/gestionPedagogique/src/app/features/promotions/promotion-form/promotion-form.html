@@ -1,12 +1,19 @@
 <form class="form-page" [formGroup]="form" (ngSubmit)="enregistrer()">
   <h1>{{ modeEdition() ? 'Modifier la promotion' : 'Nouvelle promotion' }}</h1>
 
+  @if (chargementErreur()) {
+    <div class="bandeau-erreur">{{ chargementErreur() }}</div>
+  }
+  @if (cursusErreur()) {
+    <div class="bandeau-erreur">{{ cursusErreur() }}</div>
+  }
+
   <div class="form-champs">
     <mat-form-field appearance="outline">
       <mat-label>Cursus</mat-label>
       <mat-select formControlName="idCursus">
-        @for (cursus of cursusListe(); track cursus.id) {
-          <mat-option [value]="cursus.id">{{ cursus.titre }}</mat-option>
+        @for (cursus of cursusListe(); track cursus.idCursus) {
+          <mat-option [value]="cursus.idCursus">{{ cursus.titre }}</mat-option>
         }
       </mat-select>
       @if (form.controls.idCursus.hasError('required') && form.controls.idCursus.touched) {

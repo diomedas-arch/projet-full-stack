@@ -1,5 +1,5 @@
 export interface CoursPlanifie {
-  id: number;
+  idCoursPlanifie: number;
   idPromotion: number;
   libellePromotion: string;
   idCursusCours: number;

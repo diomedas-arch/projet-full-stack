@@ -122,7 +122,7 @@ export class PlanningList implements OnInit, AfterViewInit {
         return;
       }
 
-      this.coursPlanifieService.supprimer(coursPlanifie.id).subscribe({
+      this.coursPlanifieService.supprimer(coursPlanifie.idCoursPlanifie).subscribe({
         next: () => {
           this.snackBar.open('Cours planifié supprimé.', 'Fermer', { duration: 4000 });
           this.charger();

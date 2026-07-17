@@ -41,6 +41,8 @@ export class PromotionForm implements OnInit {
   protected readonly enregistrementEnCours = signal(false);
   protected readonly libelleErreurBackend = signal<string | null>(null);
   protected readonly cursusListe = signal<Cursus[]>([]);
+  protected readonly chargementErreur = signal<string | null>(null);
+  protected readonly cursusErreur = signal<string | null>(null);
 
   protected readonly statuts = [
     { valeur: 'PLANIFIEE', label: 'Planifiée' },
@@ -60,8 +62,13 @@ export class PromotionForm implements OnInit {
     effect(() => {
       const idValeur = this.id();
       if (idValeur) {
-        this.promotionService.consulter(Number(idValeur)).subscribe((promotion) => {
-          this.form.patchValue(promotion);
+        this.chargementErreur.set(null);
+        this.promotionService.consulter(Number(idValeur)).subscribe({
+          next: (promotion) => this.form.patchValue(promotion),
+          error: (erreur: ApiError) =>
+            this.chargementErreur.set(
+              `Impossible de charger cette promotion : ${erreur.message}`
+            )
         });
       }
     });
@@ -72,7 +79,11 @@ export class PromotionForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cursusService.lister().subscribe((data) => this.cursusListe.set(data));
+    this.cursusService.lister().subscribe({
+      next: (data) => this.cursusListe.set(data),
+      error: (erreur: ApiError) =>
+        this.cursusErreur.set(`Impossible de charger les cursus : ${erreur.message}`)
+    });
   }
 
   protected enregistrer(): void {

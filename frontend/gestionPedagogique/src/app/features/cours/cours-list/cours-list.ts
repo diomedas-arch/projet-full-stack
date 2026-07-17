@@ -89,7 +89,7 @@ export class CoursList implements OnInit, AfterViewInit {
         return;
       }
 
-      this.coursService.supprimer(cours.id).subscribe({
+      this.coursService.supprimer(cours.idCours).subscribe({
         next: () => {
           this.snackBar.open('Cours supprimé.', 'Fermer', { duration: 4000 });
           this.charger();

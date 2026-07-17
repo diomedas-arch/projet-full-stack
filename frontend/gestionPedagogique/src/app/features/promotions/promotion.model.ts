@@ -1,5 +1,5 @@
 export interface Promotion {
-  id: number;
+  idPromotion: number;
   libelle: string;
   periode: string;
   statut: string;

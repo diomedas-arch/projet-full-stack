@@ -97,7 +97,7 @@ export class PromotionList implements OnInit, AfterViewInit {
         return;
       }
 
-      this.promotionService.supprimer(promotion.id).subscribe({
+      this.promotionService.supprimer(promotion.idPromotion).subscribe({
         next: () => {
           this.snackBar.open('Promotion supprimée.', 'Fermer', { duration: 4000 });
           this.charger();

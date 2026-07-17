@@ -19,11 +19,11 @@ export class CoursService {
     return this.http.get<Cours>(`${this.baseUrl}/${id}`);
   }
 
-  creer(cours: Omit<Cours, 'id'>, context?: HttpContext): Observable<Cours> {
+  creer(cours: Omit<Cours, 'idCours'>, context?: HttpContext): Observable<Cours> {
     return this.http.post<Cours>(this.baseUrl, cours, { context });
   }
 
-  modifier(id: number, cours: Omit<Cours, 'id'>, context?: HttpContext): Observable<Cours> {
+  modifier(id: number, cours: Omit<Cours, 'idCours'>, context?: HttpContext): Observable<Cours> {
     return this.http.put<Cours>(`${this.baseUrl}/${id}`, cours, { context });
   }
 
