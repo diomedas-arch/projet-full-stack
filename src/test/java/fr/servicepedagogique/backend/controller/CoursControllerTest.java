@@ -47,9 +47,13 @@ class CoursControllerTest {
 
     @Test
     @WithMockUser(authorities = "ROLE_ELEVE")
-    void lister_estRefuseAUnUtilisateurNonReferente() throws Exception {
+    void lister_estAutoriseAUnUtilisateurNonReferente() throws Exception {
+        coursRepository.save(new Cours("JAVA101", "Introduction à Java"));
+
         mockMvc.perform(get("/api/cours"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].code").value("JAVA101"));
     }
 
     @Test
