@@ -92,10 +92,17 @@ body {
   width: 96px;
 }
 
+/* Reste un vrai <td> (display: table-cell implicite) pour que le navigateur égalise sa
+   hauteur avec les autres cellules de la ligne — ne PAS mettre display:flex ici, ça
+   désynchronise la hauteur de la ligne (voir .actions-cell-contenu ci-dessous). */
 .actions-cell {
-  display: flex;
-  gap: 0.25rem;
   white-space: nowrap;
+}
+
+.actions-cell-contenu {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .etat-vide {

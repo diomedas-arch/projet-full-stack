@@ -1,5 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 
+import { decoderPayloadJwt } from './jwt.util';
+
 const CLE_TOKEN = 'gestion-pedagogique.auth-token';
 
 // Seul point d'accès à localStorage pour le token — le reste de l'app (interceptor,
@@ -11,6 +13,12 @@ export class TokenStorageService {
   private readonly tokenSignal = signal<string | null>(localStorage.getItem(CLE_TOKEN));
 
   readonly estConnecte = computed(() => this.tokenSignal() !== null);
+
+  // Rôle lu depuis le claim "role" du JWT — affichage uniquement, voir jwt.util.ts.
+  readonly role = computed(() => {
+    const token = this.tokenSignal();
+    return token ? (decoderPayloadJwt(token)?.role ?? null) : null;
+  });
 
   lire(): string | null {
     return this.tokenSignal();

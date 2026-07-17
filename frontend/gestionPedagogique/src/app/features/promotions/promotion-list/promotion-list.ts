@@ -17,6 +17,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../auth/auth.service';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { StatutBadge } from '../../../shared/ui/statut-badge/statut-badge';
 import { Promotion } from '../promotion.model';
@@ -43,8 +44,13 @@ export class PromotionList implements OnInit, AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly sort = viewChild(MatSort);
+  protected readonly authService = inject(AuthService);
 
-  protected readonly displayedColumns = ['libelle', 'cursus', 'periode', 'statut', 'actions'];
+  protected readonly displayedColumns = computed(() =>
+    this.authService.peutEcrire()
+      ? ['libelle', 'cursus', 'periode', 'statut', 'actions']
+      : ['libelle', 'cursus', 'periode', 'statut']
+  );
   protected readonly promotions = signal<Promotion[]>([]);
   protected readonly filtreStatut = signal<FiltreStatut>('TOUTES');
   protected readonly dataSource = new MatTableDataSource<Promotion>([]);

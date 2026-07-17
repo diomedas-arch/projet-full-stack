@@ -18,6 +18,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../auth/auth.service';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { Cours } from '../cours.model';
 import { CoursService } from '../cours.service';
@@ -41,8 +42,11 @@ export class CoursList implements OnInit, AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly sort = viewChild(MatSort);
+  protected readonly authService = inject(AuthService);
 
-  protected readonly displayedColumns = ['code', 'titre', 'actions'];
+  protected readonly displayedColumns = computed(() =>
+    this.authService.peutEcrire() ? ['code', 'titre', 'actions'] : ['code', 'titre']
+  );
   protected readonly cours = signal<Cours[]>([]);
   protected readonly recherche = signal('');
   protected readonly dataSource = new MatTableDataSource<Cours>([]);

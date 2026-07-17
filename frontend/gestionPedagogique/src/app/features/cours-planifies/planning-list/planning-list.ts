@@ -19,6 +19,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../auth/auth.service';
 import { ConfirmDialog } from '../../../shared/ui/confirm-dialog/confirm-dialog';
 import { StatutBadge } from '../../../shared/ui/statut-badge/statut-badge';
 import { CoursPlanifie } from '../cours-planifie.model';
@@ -47,17 +48,23 @@ export class PlanningList implements OnInit, AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly sort = viewChild(MatSort);
+  protected readonly authService = inject(AuthService);
 
-  protected readonly displayedColumns = [
+  private static readonly COLONNES_BASE = [
     'cours',
     'promotion',
     'formateur',
     'dateDebut',
     'dateFin',
     'salle',
-    'statut',
-    'actions'
+    'statut'
   ];
+
+  protected readonly displayedColumns = computed(() =>
+    this.authService.peutEcrire()
+      ? [...PlanningList.COLONNES_BASE, 'actions']
+      : PlanningList.COLONNES_BASE
+  );
 
   protected readonly coursPlanifies = signal<CoursPlanifie[]>([]);
   protected readonly filtreStatut = signal<FiltreStatut>('TOUS');

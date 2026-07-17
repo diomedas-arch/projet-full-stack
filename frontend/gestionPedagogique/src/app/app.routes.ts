@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth/auth.guard';
 
+// Rôle exact exigé en écriture par SecurityConfig.java sur /api/cours, /api/promotions
+// et /api/cours-planifies (voir auth.service.ts pour le détail).
+const ROLES_ECRITURE = ['ROLE_REFERENTE'];
+
 export const routes: Routes = [
   {
     path: '',
@@ -24,11 +28,15 @@ export const routes: Routes = [
       },
       {
         path: 'cours/nouveau',
+        canActivate: [authGuard],
+        data: { roles: ROLES_ECRITURE },
         loadComponent: () =>
           import('./features/cours/cours-form/cours-form').then((m) => m.CoursForm)
       },
       {
         path: 'cours/:id/modifier',
+        canActivate: [authGuard],
+        data: { roles: ROLES_ECRITURE },
         loadComponent: () =>
           import('./features/cours/cours-form/cours-form').then((m) => m.CoursForm)
       },
@@ -41,6 +49,8 @@ export const routes: Routes = [
       },
       {
         path: 'promotions/nouveau',
+        canActivate: [authGuard],
+        data: { roles: ROLES_ECRITURE },
         loadComponent: () =>
           import('./features/promotions/promotion-form/promotion-form').then(
             (m) => m.PromotionForm
@@ -48,6 +58,8 @@ export const routes: Routes = [
       },
       {
         path: 'promotions/:id/modifier',
+        canActivate: [authGuard],
+        data: { roles: ROLES_ECRITURE },
         loadComponent: () =>
           import('./features/promotions/promotion-form/promotion-form').then(
             (m) => m.PromotionForm
@@ -62,6 +74,8 @@ export const routes: Routes = [
       },
       {
         path: 'cours-planifies/nouveau',
+        canActivate: [authGuard],
+        data: { roles: ROLES_ECRITURE },
         loadComponent: () =>
           import('./features/cours-planifies/cours-planifie-form/cours-planifie-form').then(
             (m) => m.CoursPlanifieForm
@@ -69,6 +83,8 @@ export const routes: Routes = [
       },
       {
         path: 'cours-planifies/:id/modifier',
+        canActivate: [authGuard],
+        data: { roles: ROLES_ECRITURE },
         loadComponent: () =>
           import('./features/cours-planifies/cours-planifie-form/cours-planifie-form').then(
             (m) => m.CoursPlanifieForm
