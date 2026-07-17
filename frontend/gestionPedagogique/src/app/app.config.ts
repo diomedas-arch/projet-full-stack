@@ -8,6 +8,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
+import { authInterceptor } from './core/auth/auth.interceptor';
 import { apiErrorInterceptor } from './core/http/api-error.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -15,7 +16,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([apiErrorInterceptor])),
+    // authInterceptor attache le token avant que apiErrorInterceptor n'interprète la réponse.
+    provideHttpClient(withInterceptors([authInterceptor, apiErrorInterceptor])),
     provideAnimationsAsync()
   ]
 };

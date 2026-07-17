@@ -5,6 +5,16 @@
       <a [routerLink]="lien.path" routerLinkActive="actif">{{ lien.label }}</a>
     }
   </div>
+  <div class="nav-compte">
+    @if (connecte()) {
+      <button mat-button (click)="deconnecter()">
+        <mat-icon>logout</mat-icon>
+        Se déconnecter
+      </button>
+    } @else {
+      <a mat-button routerLink="/login">Se connecter</a>
+    }
+  </div>
 </nav>
 
 <main class="contenu">
